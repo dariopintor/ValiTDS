@@ -1,0 +1,18 @@
+ELEMENTOS REQUERIDOS ELIMINADOS DO CRITERIO TODAS AS ARESTAS S
+
+1) 4-0 2-2 (Send)
+2) 4-0 2-3 (Send)
+3) 7-0 2-1 (Send)
+4) 7-0 2-3 (Send)
+5) 17-0 2-1 (Send)
+6) 17-0 2-2 (Send)
+7) 23-0 2-1 (Send)
+8) 23-0 2-2 (Send)
+9) 4-1 24-0 (Recv)
+10) 4-1 2-2 (Send)
+11) 4-1 2-3 (Send)
+12) 4-2 24-0 (Recv)
+13) 4-2 2-1 (Send)
+14) 4-2 2-3 (Send)
+15) 4-3 2-1 (Send)
+16) 4-3 2-2 (Send)

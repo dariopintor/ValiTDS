@@ -1,0 +1,105 @@
+/**
+     * Método usado para obter a quantidade de elementos requeridos para
+     * critérios suportados pela ferramenta ValiMPI.
+     */
+    public double obtemElementosRequeridosValiMPI(){
+    System.out.println( "\n---obtemElementosValiMPI");
+    double res = 0;
+    File  arquivoElementos = new File("arquivoElementos.elen");
+    String dir_elem_req = "valimpi/res/";
+
+        
+    if(objCentral.criterioTeste.equals("Todos os Arcos"))                        // arcs
+    {
+        copyFile(arquivoElementos, (dir_elem_req + "todas-arestas.req"));
+        
+    sprintf(arquivoElementos, "%stodas-arestas.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todas-arestas");
+    } else
+    if(objCentral.criterioTeste.equals("Todos os Nos"))                               // nos
+    {
+    sprintf(arquivoElementos, "%stodos-nos.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todos-nos");
+    }/* else
+    if(objCentral.criterioTeste.equals("Todos os Potenciais Usos/du-Caminhos"))   // pudu
+    {
+    sprintf(arquivoElementos, "%stodos-p-usos.req", (*ctl)->diretorio);
+    objCentral.setCriterioTesteValiMPI ("pudu");
+    }*/ else
+    if(objCentral.criterioTeste.equals("Todos os Potenciais Usos"))            // pu
+    {
+    sprintf(arquivoElementos, "%stodos-p-usos.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todos-p-usos");
+    } /*else
+    if(objCentral.criterioTeste.equals("Todos os Potenciais du-Caminhos"))// pdu
+    {
+    sprintf(arquivoElementos, "%spdupaths.tes", (*ctl)->diretorio);
+    objCentral.setCriterioTesteValiMPI ("pdu");
+    }*/else
+    if(objCentral.criterioTeste.equals("Todos os Usos Computacionais"))           
+    {
+    sprintf(arquivoElementos, "%stodos-c-usos.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todos-c-usos");
+    }else
+    if(objCentral.criterioTeste.equals("Todos os Usos de Sincronismo"))           
+    {
+    sprintf(arquivoElementos, "%stodos-s-usos.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todos-s-usos");
+    }else
+    if(objCentral.criterioTeste.equals("Todos os Nos S"))           
+    {
+    sprintf(arquivoElementos, "%stodos-nosS.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todos-nosS");
+    }else
+    if(objCentral.criterioTeste.equals("Todos os Nos R"))           
+    {
+    sprintf(arquivoElementos, "%stodos-nosR.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todos-nosR");
+    }else
+    if(objCentral.criterioTeste.equals("Todos as Arestas S"))           
+    {
+    sprintf(arquivoElementos, "%stodas-arestasS.req", dir_elem_req);
+    objCentral.setCriterioTesteValiMPI ("todas-arestasS");
+    }
+
+    ptrArquivoElementos = fopen(arquivoElementos,"r");
+
+    if (ptrArquivoElementos == NULL)
+    {
+    sprintf(ErrorText,"nao abriu o arquivo dos elementos requeridos da ValiMPI corretamente : %s", arquivoElementos);
+    erro(ErrorText,1);
+    }
+
+    /*ate aqui beleza...*/
+    for (; ( !feof( ptrArquivoElementos ) ); )
+    {
+    strcpy(anterior, auxiliar);
+    memset(auxiliar, '\0', 500);
+    fgets(auxiliar, 500, ptrArquivoElementos);
+    trim( & auxiliar);
+    } // fim for
+
+    int carEspecial = -1;
+    
+    carEspecial = indexOf(anterior, ')');
+    anterior[carEspecial] = '\0';
+    //}  fim else
+    fclose(ptrArquivoElementos);
+    res = atof(anterior);
+    
+
+    printf("---Saindo de obtemElementosValiMPI");
+    return res;
+    }
+    
+    public void copyFile(File source, String target) throws IOException {
+        InputStream in = new FileInputStream(source);
+        OutputStream out = new FileOutputStream(target);           // Transferindo bytes de entrada para saída
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }

@@ -1,0 +1,3 @@
+recv_no  8 :send_no 4 processo  2 com_a_tag  2
+recv_no 10 :send_no 4 processo  1 com_a_tag  2
+recv_no 24 :send_no 4 processo  3 com_a_tag  2
