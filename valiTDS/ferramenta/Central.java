@@ -35,15 +35,11 @@ public class Central {
 	public int pausaGeracao;
 	/** Variavel de controle para gerar log da execucao. */
 	public int geraLog;
-	/**
-	 * Variavel de controle para indicar quantos argumentos o programa em teste
-	 * necessita
-	 */
+	/** Variavel de controle para indicar quantos argumentos o programa em teste
+	 * necessita*/
 	public int numeroArgumentos;
-	/**
-	 * Variavel de controle para indicar o tamanho manimo para o tipo string (*
-	 * String ).
-	 */
+	/**Variavel de controle para indicar o tamanho manimo para o tipo string (*
+	 * String ). */
 	public double tamanhoMinimoString;
 	/**
 	 * Variavel de controle para indicar o tamanho maximo para o tipo string (*
@@ -96,7 +92,7 @@ public class Central {
 	 */
 	public String criterioTesteValiMPI;
 	/**  */
-	public File diretorio;
+	
 	/**
 	 * Variavel de controle para indicar o diretario pool, usado para entrada de
 	 * dados na execucao do programa ja instrumentado.
@@ -211,11 +207,13 @@ public class Central {
 	public File arquivoFitness;
 	public File arquivoVariacaoFitness;
 	public File arquivoCoberturaIndividuo;
+	public File arquivoVali_EvalOut;
 	public File arquivoCoberturaElemento;
 	public File arquivoAvalCobIndividuos;
 	public File arquivoSemelhancaIndividuos;
 	public File arquivoObsCobertura;
 	public File arquivoRepositorio;
+	public File diretorio;
 
 	public long tamEnviroment;
 	/** Variavel de controle para manter o tamanho de enviroment. */
@@ -420,7 +418,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/**
 	 * Metodo que carrega na classe central informacaes sobre a execucao da
 	 * ferramenta.
@@ -556,7 +554,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/**
 	 * Metodo usado para gerar arquivo tar com informacaes completas para cada
 	 * geracao.
@@ -575,43 +573,13 @@ public class Central {
 
 		arquivoBackup.mkdir();
 
-		copyDirectory(diretorio, arquivoBackup);
-
+		objDiversos.copyDirectory(diretorio, arquivoBackup);
+				
 	}
 
-	/**
-	 * Metodo usado copiar um diretorio ( na verdade faz um backup do diretorio
-	 * atual, pois este vai ser sobscrito na proxima geracao
-	 */
-	public void copyDirectory(File sourceLocation, File targetLocation)
-			throws IOException {
-		if (sourceLocation.isDirectory()) {
-			if (!targetLocation.exists()) {
-				targetLocation.mkdir();
-			}
+	
 
-			String[] children = sourceLocation.list();
-			for (int i = 0; i < children.length; i++) {
-				copyDirectory(new File(sourceLocation, children[i]), new File(
-						targetLocation, children[i]));
-			}
-		} else {
-
-			InputStream in = new FileInputStream(sourceLocation);
-			OutputStream out = new FileOutputStream(targetLocation);
-
-			// Copy the bits from instream to outstream
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-			in.close();
-			out.close();
-		}
-	}
-
-	// _________________________________________________________________
+	 
 	/**
 	 * Metodo usado para gerar informacaes do progresso do framework ( geracao,
 	 * cobertura ).
@@ -646,7 +614,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** Metodo usado para apresentar o resultado da execucao do framework. */
 	public void resultado() {
 		long tempo = 0;
@@ -691,7 +659,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/**
 	 * Metodo usado para atribuir valor a variavel de controle que identifica o
 	 * tipo de string que o framework suporta.
@@ -706,76 +674,64 @@ public class Central {
 		tipoString = valor;
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo usado para atribuir valor a variavel de controle que possui o
+	 
+	/** Metodo usado para atribuir valor a variavel de controle que possui o
 	 * namero de entradas por argumentos necessario para execucao do programa em
-	 * teste.
-	 */
+	 * teste. */
 	public void setNumeroArgumentos(int valor) {
 		numeroArgumentos = valor;
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo usado para atribuir valor a variavel de controle responsavel pela
-	 * geracao de log de execucao do framework.
-	 * 
-	 * @throws IOException
-	 */
+	 
+	/*** Metodo usado para atribuir valor a variavel de controle responsavel pela
+	 * geracao de log de execucao do framework. 
+	 * @throws IOException */
 	public void setGeraLog(int valor) throws IOException {
 		geraLog = valor;
 		File file = new File("log_erro.log");
 		file.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo usado para atribuir valor a variavel de controle responsavel por
-	 * pausa ao fim de cada geracao.
-	 */
+	 
+	/** Metodo usado para atribuir valor a variavel de controle responsavel por
+	 * pausa ao fim de cada geracao.*/
 	public void setPausaGeracao(int valor) {
 		pausaGeracao = valor;
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo usado para atribuir valor a variavel responsavel pela quantidade
-	 * de indivaduos gerados por elitismo.
-	 */
+	 
+	/** Metodo usado para atribuir valor a variavel responsavel pela quantidade
+	 * de indivaduos gerados por elitismo. */
 	public void setQuantidadeElitismo(double valor) {
 		quantidadeElitismo = valor;
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setQuantidadeIneditismo(double valor) {
 		quantidadeIneditismo = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setQuantidadeFitness(double valor) {
 		quantidadeFitness = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setDiretorio(String valor) {
 
 		diretorio = new File(valor);
-
 		diretorio.mkdir();
-
 		pegaDiretorio = diretorio.getPath() + "/"; // pega o diretario e adicona
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
-
 	public void setArquivoPopulacaoInicial(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -783,14 +739,11 @@ public class Central {
 					.erro("setArquivoPopulacaoInicial, erro no valor passado, tam<=0...",
 							1);
 		arquivoPopulacaoInicial = new File(valor);
-
 		arquivoPopulacaoInicial.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
+	 
+	/*** No descriptions * 
 	 * @throws IOException
 	 */
 	public void setArquivoPopulacao(String valor) throws IOException {
@@ -803,10 +756,8 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
+	 
+	/**No descriptions
 	 * @throws IOException
 	 */
 	public void setArquivoPopulacaoTemporario(String valor) throws IOException {
@@ -821,12 +772,10 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/**
 	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 * @throws IOException */
 	public void setArquivoFitness(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -837,12 +786,9 @@ public class Central {
 		arquivoFitness.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
+	/** No descriptions 
+	 * @throws IOException */
 	public void setArquivoIneditismo(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -855,12 +801,9 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
+	/*** No descriptions* 
+	 * @throws IOException */
 	public void setArquivoBonusIneditismo(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -873,7 +816,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setArquivoFonte(String valor) {
 		int tam = valor.length();
@@ -885,12 +828,9 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
+	/** No descriptions 
+	 * @throws IOException*/
 	public void setArquivoSemelhancaIndividuos(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -903,7 +843,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setFormatoIndividuo(String valor) {
 		int tam = valor.length();
@@ -914,27 +854,8 @@ public class Central {
 		formatoIndividuo = valor;
 
 	}
-
-	// _________________________________________________________________
-	/** No descriptions */
-
-	// public void geraLinhaPerda() {
-	// if (geraLog == 1)
-	// objDiversos.toFile("log_erro.log", "------geraLinhaPerda");
-	//
-	//
-	// linhaPerda.replace(linhaPerda.charAt((int)quantidadeElemento),'\0');
-	// for (int j = 0; j < quantidadeElemento; j++) {
-	// if ((linhaCoberturaAnterior.charAt(j)== 'X')
-	// && (linhaCoberturaAtual.charAt(j) != 'X'))
-	// linhaPerda.replace(linhaPerda.charAt((int)linhaPerda + j),'P');
-	// //(linhaPerda + j) = 'P';
-	// }
-	//
-	// }
-
-	// _________________________________________________________________
-
+	 
+	/** seta as funçoes serem testadas do programa em teste.*/
 	public void setFuncaoATestar(String valor) {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -943,12 +864,7 @@ public class Central {
 		funcaoATestar = valor;
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	
 	public void setArquivoVariacaoFitness(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -960,13 +876,8 @@ public class Central {
 		arquivoVariacaoFitness.createNewFile();
 
 	}
-
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+ 
+	
 	public void setArquivoCoberturaElemento(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -978,12 +889,7 @@ public class Central {
 		arquivoCoberturaElemento.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+
 	public void setArquivoCoberturaIndividuo(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -995,12 +901,7 @@ public class Central {
 		arquivoCoberturaIndividuo.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	
 	public void setArquivoRepositorio(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -1012,12 +913,8 @@ public class Central {
 		arquivoRepositorio.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
+	
 	public void setArquivoAvalCobIndividuos(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -1030,12 +927,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
 	public void setArquivoObsCobertura(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -1048,12 +940,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
 	public void setArquivoMelhorPopulacao(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -1065,12 +952,7 @@ public class Central {
 		arquivoMelhorPopulacao.createNewFile();
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
 	public void setArquivoTabu(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -1082,12 +964,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * No descriptions
-	 * 
-	 * @throws IOException
-	 */
+	 
 	public void setArquivoTabuAux(String valor) throws IOException {
 		int tam = valor.length();
 		if (tam <= 0)
@@ -1099,8 +976,8 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
-	/** No descriptions */
+	 
+	/** Metodo para indicar o tamanho manimo para o tipo string  */
 	public void setTamanhoString(String valor) {
 
 		String quebra[];
@@ -1110,25 +987,25 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setTamanhoPopulacao(double valor) {
 		tamanhoPopulacao = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setMaximoGeracoes(double valor) {
 		maximoGeracoes = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setCoberturaCriterio(double valor) {
 		coberturaCriterio = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setCriterioTeste(String valor) {
 		if (valor.length() <= 0)
@@ -1138,19 +1015,19 @@ public class Central {
 		criterioTeste = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setTaxaMutacao(double valor) {
 		taxaMutacao = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setTaxaCrossover(double valor) {
 		taxaCrossover = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setVariacaoInteiro(String valor) {
 		String quebra[];
@@ -1158,27 +1035,22 @@ public class Central {
 		tamanhoMinimoInteiro = Integer.parseInt(quebra[0].trim());
 		tamanhoMaximoInteiro = Integer.parseInt(quebra[1].trim());
 		variacaoInteiro = tamanhoMaximoInteiro - tamanhoMinimoInteiro;
-
-		/*
-		 * System.out.println("\ntamanhoMinimoInteiro: " + tamanhoMinimoInteiro
-		 * + "\ntamanhoMaximoInteiro:" + tamanhoMaximoInteiro +
-		 * "\nvariacaoInteiro: " + variacaoInteiro);
-		 */
+		
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setMelhorCobertura(double valor) {
 		melhorCobertura = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setIndiceMelhorGeracao(double valor) {
 		indiceMelhorGeracao = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setTamanhoIndividuo() {
 		int tam = formatoIndividuo.length();
@@ -1186,8 +1058,9 @@ public class Central {
 			tamanhoIndividuo += tamanhoTipo(pos);
 	}
 
-	// _________________________________________________________________
-	/** No descriptions */
+	 
+	/** Metodo usado para setar  o formato da entrada
+	 *  do programa, consequentemente o formato do  indivaduo do AG. */
 	public int tamanhoTipo(int pos) {
 		switch (formatoIndividuo.charAt(pos)) {
 		case 'I':
@@ -1204,14 +1077,14 @@ public class Central {
 		return 0; // zero nao influencia no tamanho do outros tipos.
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setQuantidadeElemento(double valor) {
 		quantidadeElemento = valor;
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setCoberturaAtual(double valor) {
 		coberturaAtual = valor;
@@ -1220,13 +1093,13 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setSomatoriaFitness(double valor) {
 		somatoriaFitness = valor;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void setCriterioTesteValiMPI(String valor) {
 		int tam = valor.length();
@@ -1239,7 +1112,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public int inicioTipo(int pos) {
 		int res = 0;
@@ -1248,11 +1121,9 @@ public class Central {
 		return res;
 	}
 
-	// _________________________________________________________________
-	/***
-	 * Metodo usado para verificar se o framework deve encerrar execucao ou por
-	 * ter alcanaado a cobertura desejada ou por alcanaar limite de geracaes.
-	 */
+	 
+	/**** Metodo usado para verificar se o framework deve encerrar execucao ou por
+	 * ter alcanaado a cobertura desejada ou por alcanaar limite de geracaes.	 */
 	public boolean paraTeste() {
 		if (geracaoAtual == (maximoGeracoes + 1))
 			return true;
@@ -1265,33 +1136,16 @@ public class Central {
 		return false;
 	}
 
-	// _________________________________________________________________
-	/** Metodo para calculo do madulo entre dois doubles. */
-	public double modulo(double a, double b) {
-		if (a < 0)
-			a *= -1;
-		if (b < 0)
-			b *= -1;
-		for (; a >= b; a -= b)
-			;
-		return a;
-	}
-
-	// _________________________________________________________________
-	/**
-	 * Metodo para geracao aleataria de um double, simulacao de sorteio.
-	 */
+		 
+	/** Metodo para geracao aleataria de um double, simulacao de sorteio.	 */
 	public double geraSorteio(double maximo) {
 		/**/
 		int num1 = (int) Math.random() * 100;
-		return modulo(num1, maximo);
-
+		return objDiversos.modulo(num1, maximo);
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo para avaliar a cobertura de cada indivaduo na populacao do AG.
-	 */
+	 
+	/** Metodo para avaliar a cobertura de cada indivaduo na populacao do AG. */
 	public void avaliacaoCobertura() throws IOException {
 
 		if (geraLog == 1) {
@@ -1308,10 +1162,8 @@ public class Central {
 		linha = lerArq.readLine();
 		for (int i = 0; (linha != null); i++) {
 			System.out.printf("\n cont: %d, <%s>", i, linha);
-			linha.trim();
-
-			// pprova("PTO 2 ---avaliacaoCobertura");
-
+			linha = linha.trim();
+			
 			if (linha != "") {
 
 				for (int j = 0; j < quantidadeElemento; j++) {
@@ -1325,11 +1177,10 @@ public class Central {
 				objDiversos.escreverArquivo("avalCoberturas.tst", linha);
 			}
 		}
-
 		arq.close();
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void atualizaLinhaCoberturas(String novaCobertura) {
 
@@ -1354,7 +1205,7 @@ public class Central {
 		// setCoberturaAtual(0);
 	}
 
-	// _________________________________________________________________
+	 
 	/**
 	 * Metodo usado para verificar se um determinado individuo ja foi executado
 	 * anteriormente, caso positivo, copia o desempenho armazenado no
@@ -1379,7 +1230,7 @@ public class Central {
 		return desempenho;
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void atualizaPerda(String desempenho) {
 		int indice = -1;
@@ -1394,7 +1245,7 @@ public class Central {
 
 	}
 
-	// _________________________________________________________________
+	 
 	/** No descriptions */
 	public void manutencaoMelhorGeracao() {
 		if (coberturaAtual > melhorCobertura) {
@@ -1402,26 +1253,20 @@ public class Central {
 			setIndiceMelhorGeracao(geracaoAtual);
 			arquivoMelhorPopulacao = arquivoPopulacao;
 		}
-
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo para atribuir valores para variavel de controle correctPath, com
-	 * recolocacao de memoria se necessario.
-	 */
+	 
+	/*** Metodo para atribuir valores para variavel de controle correctPath, com
+	 * recolocacao de memoria se necessario. */
 	public void setEnviroment(String valor) {
 		int tam = valor.length();
 		if (tam <= 0)
-			objDiversos.erro("setEnviroment, erro no valor passado, tam<=0...",
-					1);
-		enviroment = valor;
+			objDiversos.erro("setEnviroment, erro no valor passado, tam<=0...", 1);
+			enviroment = valor;
 	}
 
-	/**
-	 * Metodo usado para recalcular a quantidade de individuos gerados por
-	 * elitismo, selecao e ineditismo.
-	 */
+	/** Metodo usado para recalcular a quantidade de individuos gerados por
+	 * elitismo, selecao e ineditismo. */
 	public void recalculaPorcEvolucao() {
 		double total = (quantidadeElitismo + quantidadeIneditismo + quantidadeFitness);
 		quantidadeElitismo = (int) (quantidadeElitismo * tamanhoPopulacao / total);
@@ -1431,10 +1276,8 @@ public class Central {
 
 	}
 
-	/**
-	 * Metodo usado para atribuir valor para variavel de controle
-	 * linhaCoberturaAnterior
-	 */
+	/**Metodo usado para atribuir valor para variavel de controle
+	 * linhaCoberturaAnterior */
 	public void setLinhaCoberturaAnterior(String valor) {
 		int tam = valor.length();
 		valor.length();
@@ -1447,10 +1290,8 @@ public class Central {
 
 	}
 
-	/**
-	 * Metodo usado para atribuir valor para variavel de controle
-	 * linhaCoberturaAtual.
-	 */
+	/** Metodo usado para atribuir valor para variavel de controle
+	 * linhaCoberturaAtual. */
 	public void setLinhaCoberturaAtual(String valor) {
 		int tam = valor.length();
 		if (tam <= 0) {
