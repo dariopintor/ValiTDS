@@ -213,12 +213,8 @@ public class Ferramenta {
 		
 		//executa dado na valimpi
 		objUsaValiMPI.exeVali_exec("1", objCentral.nProcess, objCentral.funcaoATestar, linhaArgumento);
-		
 		// avalia dado recem executado na valimpi
-		objUsaValiMPI.exeVali_eval(objCentral.criterioTeste, objCentral.nProcess, objCentral.funcoes);
-		
-		 		   
-		    
+		objUsaValiMPI.exeVali_eval(objCentral.criterioTeste, objCentral.nProcess, objCentral.funcoes);      
 	}
 
 
@@ -232,17 +228,13 @@ public class Ferramenta {
 		int elem_coberto;
 		String frase = null;
 		int tamExeResultado = (int) ((objCentral.diretorio.length() + objCentral.criterioTesteValiMPI.length()) + 15);
-		String arquivoExeResultado = null, 
-				linhaCoberturaLocal = null;
+		File arquivoExeResultado = null;
+		String	linhaCoberturaLocal = null;
 		String linha = "";
-		//passa o caminho do arq. onde está a cobertura
-		arquivoExeResultado = objCentral.diretorio + "%svali_eval.out";
-		
+				
 		//comandos para leitura do arq. da cobertura
-		FileReader  ptrExeResultado = new FileReader(arquivoExeResultado);
+		FileReader  ptrExeResultado = new FileReader("gcd/vali_eval.out");
 		BufferedReader lerPtrExeResultado = new BufferedReader(ptrExeResultado);
-		
-			
 		String elCoberto = null;
 		
 		// le a primeira linah do arquivo 
