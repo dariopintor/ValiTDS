@@ -25,7 +25,6 @@ public class Diversos {
 	 * http://openv2dge.googlecode.com/svn-history/r56/trunk/TiledMapEditor/src/
 	 * tiled/util/MersenneTwister.java
 	 ***************************************************************************/
-
 	/***************************************************************************
 	 * * This program is free software; you can redistribute it and/or modify *
 	 * it under the terms of the GNU General Public License as published by *
@@ -33,7 +32,6 @@ public class Diversos {
 	 * your option) any later version. * *
 	 ***************************************************************************/
 
-	// #include "diversos.h"
 	Mersenne objMersenne;
 
 	public Diversos() {
@@ -41,10 +39,8 @@ public class Diversos {
 		objMersenne = new Mersenne();
 	}
 
-	/**
-	 * Fun��o usada para apresentar mensagem de erro e finalizar o programa caso
-	 * necess�rio.
-	 */
+	/** Funçço usada para apresentar mensagem de erro e finalizar o programa caso
+	 * necessçrio.	 */
 	public void erro(String str, int fim) {
 		System.out
 				.println("\n\n######################################################\n\nERRO - "
@@ -52,25 +48,19 @@ public class Diversos {
 		if (fim == 1)
 			System.exit(0);
 	}
+ 
 
-	// _________________________________________________________________
-
-	/** Fun��o usada para obter segundos referentes a data e hora atuais. */
-
+	/** Funcao usada para obter segundos referentes a data e hora atuais. */
 	public long getSecs() {
 
 		Calendar dataFinal = Calendar.getInstance();
-
 		long hora = dataFinal.getTimeInMillis();
-
 		return hora;
 
 	}
 
-	// _________________________________________________________________
-
-	/**
-	 * Fun��o usada para enviar conteudo no final de um arquivo com informa��o
+ 
+	/**	 * Funçço usada para enviar conteudo no final de um arquivo com informaçço
 	 * da hora.
 	 */
 	public  void toFile(String caminho, String conteudo) throws IOException {
@@ -81,46 +71,24 @@ public class Diversos {
 		String formattedDate = formato.format(hora);
 		
 		FileWriter fw = new FileWriter(caminho, true);  //recebe um caminho de um arquivo
-        BufferedWriter conexao = new BufferedWriter(fw);  //da a permiss�o para esse aquivo ser escrito
+        BufferedWriter conexao = new BufferedWriter(fw);  //da a permissço para esse aquivo ser escrito
         conexao.write(conteudo + "\t" + formattedDate);   //escreve no arquivo
         conexao.newLine();  
-        conexao.close(); 
-               	
-
+        conexao.close();  
 	}
 	 
 	
-public  void escreverArquivo(String caminho, String conteudo) throws IOException {
-		
-				
+	public  void escreverArquivo(String caminho, String conteudo) throws IOException {
+					
 		FileWriter fw = new FileWriter(caminho, true);  //recebe um caminho de um arquivo
-        BufferedWriter conexao = new BufferedWriter(fw);  //da a permiss�o para esse aquivo ser escrito
+        BufferedWriter conexao = new BufferedWriter(fw);  //da a permissço para esse aquivo ser escrito
         conexao.write(conteudo);   //escreve no arquivo
         conexao.newLine();  
         conexao.close(); 
-               	
-
-	}
-	// _________________________________________________________________
-
-	/**
-	 * Fun��o usada para enviar conteudo no final de um arquivo com informa��o
-	 * da hora.
-	 */
-	/*
-	 * int appendToFile(String arquivo, int contador, String conteudo) { File
-	 * ptrFile; ptrFile = new File (arquivo); ptrFile = "%5d : %s\n" + contador
-	 * + conteudo; ptrFile. fclose(ptrFile);
-	 * 
-	 * }//fim toFile
-	 */
-
-	// _________________________________________________________________
-
-	/**
-	 * Fun��o usada para retornar o n�mero de ocorrencias de um caracter em um
-	 * string.
-	 */
+	}	
+	
+ 	/** Funcao usada para retornar o nçmero de ocorrencias de um caracter em um
+	 * string.*/
 	public int numberOf(String str, char busca) {
 		int tam = str.length();
 		int res = 0;
@@ -131,9 +99,8 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 		return res;
 	}// fim indexOf
 
-	// _________________________________________________________________
-
-	/** Fun��o usada para retornar a posi��o de um caracter em um string. */
+	
+	/** Funçao usada para retornar a posiçço de um caracter em um string. */
 	public int indexOf(String str, char busca) {
 		int tam = str.length();
 		for (int i = 0; i < tam; i++) {
@@ -143,9 +110,8 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 		return -1;
 	}// fim indexOf
 
-	// _________________________________________________________________
-
-	/** Fun��o usada para retornar a posi��o de um substring em um string. */
+	
+	/** Funcao usada para retornar a posicao de um substring em um string. */
 	int indexOf(String str, String busca) {
 		int tamStr = str.length(), tamBusca = busca.length(), res = -1;
 		if (tamBusca > tamStr)
@@ -165,24 +131,9 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 
 	}// fim indexOf
 
-	// _________________________________________________________________
 
-	/**
-	 * Fun��o usada para retirar espa�oes em branco do in�cio e fim de um string
-	 */
-
-	public String trim(String string) {
-
-		String temp = string.trim();
-
-		return temp;
-
-	}// fim trim
-
-	/**
-	 * * Fun��o usada para gerar um caracter aleatoriamente, com base no string
-	 * seletivo.
-	 */
+	/** Funcaoo usada para gerar um caracter aleatoriamente, com base no string
+	 * seletivo.*/
 	char generateChar(String seletivo) {
 		int somatoria = 0, sorteio = 0;
 		int entraEspaco = 0, entraLETRA = 0, entraLetra = 0, entraNumero = 0;
@@ -204,32 +155,28 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 				somatoria += 10;
 				entraNumero = 1;
 				break;
-			} // fim switch
-				// if (seletivo[i] == 's') somatoria += 1; //espa�o
-			// if (seletivo[i] == 'L') somatoria += 26; //letras maisculas
-			// if (seletivo[i] == 'l') somatoria += 26; //letras minusculas
-			// if (seletivo[i] == 'n') somatoria += 10; //numeros
+			} 
 		}
 		// Obtive quantos podem ser os numeros a serem sorteados.
 		sorteio = (objMersenne.genrand() % somatoria);
-		// Tirar caracteres invalidos, joga para espa�o
+		// Tirar caracteres invalidos, joga para espaço
 		sorteio += 32;
-		// Se espa�o fora soma 1
+		// Se espaço fora soma 1
 		if (entraEspaco == 0)
 			sorteio += 1;
-		// Tira espa�os invalidos entre espa�o e numeros, joga para numeros
+		// Tira espaços invalidos entre espaço e numeros, joga para numeros
 		if (sorteio > 32)
 			sorteio += 15;
 		// Se numeros fora soma 10
 		if ((entraNumero == 0) && (sorteio >= 48))
 			sorteio += 10;
-		// Tira espa�os invalidos entre espa�o e numeros, joga para LETRAS
+		// Tira espaços invalidos entre espaço e numeros, joga para LETRAS
 		if (sorteio > 57)
 			sorteio += 7;
 		// Se LETRAS fora soma 26
 		if ((entraLETRA == 0) && (sorteio >= 65))
 			sorteio += 26;
-		// Tira espa�os invalidos entre LETRAS e letras, joga para letras
+		// Tira espaços invalidos entre LETRAS e letras, joga para letras
 		if (sorteio > 90)
 			sorteio += 6;
 		// Se letras fora soma 26
@@ -239,15 +186,13 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 		return (char) sorteio;
 	} // fim generateChar
 
+	
 	/**
-	 * Fun��o usada para calcular tamanho usado pelos numeros na linha do
-	 * arquivo
-	 */
-
+	 * Funcao usada para calcular tamanho usado pelos numeros na linha do
+	 * arquivo*/
 	int nroEspacos(int tamPopulacao) {
 		int nroEspacos = 0;
-		for (int base = 10; tamPopulacao >= base; base *= 10, nroEspacos++)
-			;
+		for (int base = 10; tamPopulacao >= base; base *= 10, nroEspacos++);
 		return nroEspacos + 10;
 	}
 
@@ -260,12 +205,9 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 		return true;
 	}
 	
-	/**
-	 * Metodo usado para contar a quantidade de linhas dentro de um aquivo
-	 * 
-	 * @throws IOException
-	 */
-
+	
+	/*** Metodo usado para contar a quantidade de linhas dentro de um aquivo
+	 * @throws IOException	 */
 	public int quantidadeLinhas(File arquivo) throws IOException {
 		String linha = "";
 		int quantidadeDeLinhas = 0;
@@ -275,24 +217,21 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 		linha = lerArq.readLine();
 		while (linha != null) {
 			quantidadeDeLinhas++;
-
 			linha = lerArq.readLine();
-
 		}
+		
 		lerArq.close();
 		return quantidadeDeLinhas;
 	}
 
-	/**
-	 * Metodo usado para copiar um arquivo de outro
-	 * 
-	 * @throws IOException
-	 */
+	
+	/** Metodo usado para copiar um arquivo de outro
+	 *  @throws IOException*/
 	public void copyFile(String source, File target) throws IOException {
 		InputStream in = new FileInputStream(source);
 		OutputStream out = new FileOutputStream(target); // Transferindo bytes
 															// de entrada para
-															// sa�da
+															// saçda
 		byte[] buf = new byte[1024];
 		int len;
 		while ((len = in.read(buf)) > 0) {
@@ -302,5 +241,46 @@ public  void escreverArquivo(String caminho, String conteudo) throws IOException
 		out.close();
 	}
 
+	
+	/** Metodo usado copiar um diretorio ( na verdade faz um backup do diretorio
+	 * atual, pois este vai ser sobscrito na proxima geracao*/
+	public void copyDirectory(File sourceLocation, File targetLocation)
+			throws IOException {
+		if (sourceLocation.isDirectory()) {
+			if (!targetLocation.exists()) {
+				targetLocation.mkdir();
+			}
+
+			String[] children = sourceLocation.list();
+			for (int i = 0; i < children.length; i++) {
+				copyDirectory(new File(sourceLocation, children[i]), new File(
+						targetLocation, children[i]));
+			}
+		} else {
+
+			InputStream in = new FileInputStream(sourceLocation);
+			OutputStream out = new FileOutputStream(targetLocation);
+
+			// Copy the bits from instream to outstream
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			in.close();
+			out.close();
+		}
+	}
+	
+	/** Metodo para calculo do madulo entre dois doubles. */
+	public double modulo(double a, double b) {
+		if (a < 0)
+			a *= -1;
+		if (b < 0)
+			b *= -1;
+		for (; a >= b; a -= b)
+			;
+		return a;
+	}
 
 }
