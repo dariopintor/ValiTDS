@@ -18,10 +18,7 @@ public class Ferramenta {
 	 * ferramenta.cpp - description ------------------- begin : Dom Jul 6 2003
 	 * copyright : (C) 2003 by Luciano Petinati Ferreira email :
 	 * petinat@inf.ufpr.br
-	 ***************************************************************************/
-
-	/***************************************************************************
-	 * * This program is free software; you can redistribute it and/or modify *
+	   This program is free software; you can redistribute it and/or modify *
 	 * it under the terms of the GNU General Public License as published by *
 	 * the Free Software Foundation; either version 2 of the License, or * (at
 	 * your option) any later version. * *
@@ -55,7 +52,7 @@ public class Ferramenta {
 		System.out.println("\nUtilizando ValiMPI.");
 
 		objUsaValiMPI.exeVali_inst(objCentral.arquivoFonte);
-		objUsaValiMPI.exeVali_reduce(null); // ainda nao implemtado
+		objUsaValiMPI.exeVali_reduce(null); // ainda nao implementadotado
 		objUsaValiMPI.exeVali_elem(objCentral.nProcess, objCentral.funcoes);
 		objUsaValiMPI.exeVali_cc(objCentral.funcaoATestar);
 
