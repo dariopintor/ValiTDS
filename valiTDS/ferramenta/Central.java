@@ -150,56 +150,35 @@ public class Central {
 	 * consequentemente o formato do indivaduo do AG.
 	 */
 	public String formatoIndividuo;
-	/**
-	 * * Variavel de controle para conter informacaes sobre perda de cobertura
-	 * de elementos requeridos.
-	 */
+	/** * Variavel de controle para conter informacaes sobre perda de cobertura
+	 * de elementos requeridos. */
 	public String linhaPerda;
-	/**
-	 * Variavel de controle para conter a cobertura atual de elementos
-	 * requeridos ( X: para coberto, -: para nao coberto ).
-	 */
+	/*** Variavel de controle para conter a cobertura atual de elementos
+	 * requeridos ( X: para coberto, -: para nao coberto ).	 */
 	public String linhaCoberturaAtual;
-	/**
-	 * Variavel de controle para conter informacaes de cobertura de elementos
-	 * requeridos da geracao anterior.
-	 */
+	/*** Variavel de controle para conter informacaes de cobertura de elementos
+	 * requeridos da geracao anterior. */
 	public String linhaCoberturaAnterior;
-	/**
-	 * Variavel de controle para conter informacaes a cobertura global de
-	 * elementos requeridos, independente de geracao.
-	 */
+	/*** Variavel de controle para conter informacaes a cobertura global de
+	 * elementos requeridos, independente de geracao.*/
 	public String coberturaGlobal; // novo nome linhaCoberturaGlobal
 	/** Variavel de controle para conter o nome do arquivo da lista Tabu. */
 	public File arquivoTabu;
-	/**
-	 * Variavel de controle para conter o nome do arquivo temporario da lista
-	 * Tabu.
-	 */
+	/** Variavel de controle para conter o nome do arquivo temporario da lista
+	 * Tabu.*/
 	public File arquivoTabuAux;
-	/**
-	 * Variavel de controle para conter o nome do arquivo fonte do programa em
-	 * teste.
-	 */
+	/**Variavel de controle para conter o nome do arquivo fonte do programa em
+	 * teste.*/
 	public String arquivoFonte;
-	/**
-	 * Variavel de controle que identifica o tipo de string que o framework
-	 * suporta.
-	 */
+	/** Variavel de controle que identifica o tipo de string que o framework
+	 * suporta.*/
 	public String tipoString;
-	/**
-	 * Variavel de controle que contera o comando a ser executado por chamada
-	 * system com variavel de ambiente PATH corretamente configurada.
-	 */
+	/** Variavel de controle que contera o comando a ser executado por chamada
+	 * system com variavel de ambiente PATH corretamente configurada.	 */
 	public String comandPath;
-	/**
-	 * Variavel de controle que contera o PATH correto baseado na ferramenta de
-	 * teste a ser usada.
-	 */
-	// String enviroment;
 	public String enviroment;
 
-	/** Atributos sem comentarios... */
+	/** arquivos gerados durante a geração */
 	public File arquivoPopulacaoInicial;
 	public File arquivoPopulacao;
 	public File arquivoMelhorPopulacao;
@@ -217,35 +196,27 @@ public class Central {
 
 	public long tamEnviroment;
 	/** Variavel de controle para manter o tamanho de enviroment. */
-
 	public long tamComandPath;
 	/** Variavel de controle para manter o tamanho de comandPath. */
 	public File arquivoPopulacaoTemporario2;
-	/**
-	 * Atributo usado para conter o nome para um arquivo temporario para a
-	 * populacao.
-	 */
+	/** Atributo usado para conter o nome para um arquivo temporario para a
+	 * populacao.*/
 	public int ativaTabu = 0;
 	/** Atributo usado para controlar a ativacao do recurso de lista Tabu. */
 	public File arquivoBonusIneditismo;
 	public File arquivoIneditismo;
-	/**
-	 * Atributo usado para guardar quantas gercaes serao usadas/configuradas
+	/**	 * Atributo usado para guardar quantas gercaes serao usadas/configuradas
 	 * para verificar o repositario de execucao antes de executar um determinado
-	 * caso de teste. Isto pode aumentar o desempenho do sistema.
-	 */
+	 * caso de teste. Isto pode aumentar o desempenho do sistema.	 */
 	public double geracoesComRepositorio;
 	/** Atributo com o tempo em segundos da execucao do sistema. */
 	public int inicioExecucao;
 	/** Atributo com o tempo em segundo do fim de execucao do sistema */
 	public long fimExecucao;
-	/**
-	 * Atributo com o tempo em segundo do fim da primeira execucao do sistema
-	 */
+	/** Atributo com o tempo em segundo do fim da primeira execucao do sistema */
 	public long fimPrimeiraExecucao;
 	/** Atributo para manter a cobertura inicial do processo. */
 	public double coberturaInicial;
-
 	/** Atributo que diz quantos processos o programa usa. */
 	public String nProcess;
 	/** Atributo que diz qual processo sera qual namero */
@@ -258,173 +229,14 @@ public class Central {
 	File arquivoResumo;
 
 	public Central() {
-
-		objDiversos = new Diversos(); // instaciacao do objeto da classe
-										// diversos
+		
+		objDiversos = new Diversos(); 
 		objMersenne = new Mersenne();
-
-		// cout << "\nConstruindo central...";
-		int inicioExecucao;
-		fimExecucao = 0;
-		fimPrimeiraExecucao = 0;
-		pausaGeracao = 0;
-		ativaTabu = 0;
-		geraLog = 0;
-		numeroArgumentos = 0;
-		tamanhoMinimoString = 1;
-		tamanhoMaximoString = 30;
-		tamanhoMinimoInteiro = 0;
-		tamanhoMaximoInteiro = 10000;
-		tamanhoMaximoArgumento = 30;
-		variacaoInteiro = 10000;
-		quantidadeElemento = 0;
-		coberturaAtual = 0;
-		somatoriaFitness = 0;
-		criterioTeste = null;
-		funcaoATestar = null;
-		// criterioTestePoketool = null;
-		// diretorio = null;
-		// diretorioPool = null;
-		maximoGeracoes = 0;
-		geracaoAtual = 0;
-		indiceMelhorGeracao = 0;
-		tamanhoIndividuo = 0;
-		tamanhoPopulacao = 0;
-		coberturaCriterio = 0; // novo nome coberturaDesejada
-		coberturaInicial = 0;
-		melhorCobertura = 0;
-		taxaMutacao = 0;
-		taxaCrossover = 0;
-		quantidadeElitismo = 0;
-		quantidadeIneditismo = 0;
-		quantidadeFitness = 0; // novo nome quantidadeSelecao
-		geracoesComRepositorio = 50;
-
-		formatoIndividuo = "";
-		linhaPerda = "";
-		linhaCoberturaAtual = "";
-		linhaCoberturaAnterior = "";
-		coberturaGlobal = "";
-		arquivoTabu = null;
-		arquivoTabuAux = null;
-		arquivoFonte = "";
-		arquivoPopulacaoInicial = null;
-		arquivoPopulacao = null;
-		arquivoMelhorPopulacao = null;
-		arquivoPopulacaoTemporario = null;
-		arquivoFitness = null;
-		arquivoVariacaoFitness = null;
-		arquivoCoberturaIndividuo = null;
-		arquivoCoberturaElemento = null;
-		arquivoAvalCobIndividuos = null;
-		arquivoSemelhancaIndividuos = null;
-		arquivoObsCobertura = null;
-		arquivoRepositorio = null;
-		arquivoBonusIneditismo = null;
-		arquivoIneditismo = null;
-		criterioTeste = "";
-		funcaoATestar = "";
-		criterioTesteValiMPI = "";
-		diretorio = null;
-		diretorioPool = "";
-		tipoString = "";
-		comandPath = "";
-		enviroment = " ";
-		arquivoPopulacaoTemporario2 = null;
-		funcoes = "";
-		ccargs = "";
-
-		nProcess = "";
-
-		tamEnviroment = 480;
-		tamComandPath = 600;
-
 	}
-
-	/**
-	 * Metodo que mostra na tela o valor de todas as variaveis de controle da
-	 * classe central.
-	 */
-	public void printAll() {
-		System.out.println("\n pausaGeracao  " + pausaGeracao);
-		System.out.println("\n ativaTabu = " + ativaTabu);
-		System.out.println("\n geraLog = " + geraLog);
-		System.out.println("\n numeroArgumentos = " + numeroArgumentos);
-		System.out.println("\n tamanhoMinimoString = " + tamanhoMinimoString);
-		System.out.println("\n tamanhoMaximoString = " + tamanhoMaximoString);
-		System.out.println("\n tamanhoMinimoInteiro = " + tamanhoMinimoInteiro);
-		System.out.println("\n tamanhoMaximoInteiro = " + tamanhoMaximoInteiro);
-		System.out.println("\n tamanhoMaximoArgumento = "
-				+ tamanhoMaximoArgumento);
-		System.out.println("\n variacaoInteiro = " + variacaoInteiro);
-		System.out.println("\n quantidadeElemento = " + quantidadeElemento);
-		System.out.println("\n coberturaAtual = " + coberturaAtual);
-		System.out.println("\n somatoriaFitness = " + somatoriaFitness);
-		System.out.println("\n maximoGeracoes = " + maximoGeracoes);
-		System.out.println("\n geracaoAtual = " + geracaoAtual);
-		System.out.println("\n indiceMelhorGeracao = " + indiceMelhorGeracao);
-		System.out.println("\n tamanhoIndividuo = " + tamanhoIndividuo);
-		System.out.println("\n tamanhoPopulacao = " + tamanhoPopulacao);
-		System.out.println("\n coberturaCriterio = " + coberturaCriterio);
-		System.out.println("\n melhorCobertura = " + melhorCobertura);
-		System.out.println("\n taxaMutacao = " + taxaMutacao);
-		System.out.println("\n taxaCrossover = " + taxaCrossover);
-		System.out.println("\n quantidadeElitismo = " + quantidadeElitismo);
-		System.out.println("\n quantidadeIneditismo = " + quantidadeIneditismo);
-		System.out.println("\n quantidadeFitness = " + quantidadeFitness);
-		System.out.println("\n geracoesComRepositorio = "
-				+ geracoesComRepositorio);
-		System.out.println("\n formatoIndividuo = " + formatoIndividuo);
-		System.out.println("\n linhaPerda = " + linhaPerda);
-		System.out.println("\n linhaCoberturaAtual = " + linhaCoberturaAtual);
-		System.out.println("\n linhaCoberturaAnterior = "
-				+ linhaCoberturaAnterior);
-		System.out.println("\n coberturaGlobal = " + coberturaGlobal);
-		System.out.println("\n arquivoTabu = " + arquivoTabu);
-		System.out.println("\n arquivoTabuAux = " + arquivoTabuAux);
-		System.out.println("\n arquivoFonte = " + arquivoFonte);
-		System.out.println("\n arquivoPopulacaoInicial = "
-				+ arquivoPopulacaoInicial);
-		System.out.println("\n arquivoPopulacao = " + arquivoPopulacao);
-		System.out.println("\n arquivoMelhorPopulacao = "
-				+ arquivoMelhorPopulacao);
-		System.out.println("\n arquivoPopulacaoTemporario = "
-				+ arquivoPopulacaoTemporario);
-		System.out.println("\n arquivoFitness = " + arquivoFitness);
-		System.out.println("\n arquivoVariacaoFitness = "
-				+ arquivoVariacaoFitness);
-		System.out.println("\n arquivoCoberturaIndividuo = "
-				+ arquivoCoberturaIndividuo);
-		System.out.println("\n arquivoCoberturaElemento = "
-				+ arquivoCoberturaElemento);
-		System.out.println("\n arquivoAvalCobIndividuos = "
-				+ arquivoAvalCobIndividuos);
-		System.out.println("\n arquivoSemelhancaIndividuos = "
-				+ arquivoSemelhancaIndividuos);
-		System.out.println("\n arquivoObsCobertura = " + arquivoObsCobertura);
-		System.out.println("\n arquivoRepositorio = " + arquivoRepositorio);
-		System.out.println("\n arquivoBonusIneditismo = "
-				+ arquivoBonusIneditismo);
-		System.out.println("\n arquivoIneditismo = " + arquivoIneditismo);
-		System.out.println("\n criterioTeste = " + criterioTeste);
-		System.out.println("\n funcaoATestar = " + funcaoATestar);
-		System.out.println("\n criterioTesteValiMPI = " + criterioTesteValiMPI);
-		System.out.println("\n diretorio = " + diretorio);
-		System.out.println("\n diretorioPool = " + diretorioPool);
-		System.out.println("\n tipoString = " + tipoString);
-
-		System.out.println("\n funcoes =" + funcoes);
-		System.out.println("\n numero_processos =" + nProcess);
-
-	}
-
 	 
-	/**
-	 * Metodo que carrega na classe central informacaes sobre a execucao da
+	/**Metodo que carrega na classe central informacaes sobre a execucao da
 	 * ferramenta.
-	 * 
-	 * @throws IOException
-	 */
+	 * @throws IOException*/
 	public void interpretaArquivoConfiguracao() throws IOException {
 
 		String nomeArq = "arqconfig.txt"; // Nome do arquivo,
@@ -751,8 +563,12 @@ public class Central {
 		if (tam <= 0)
 			objDiversos.erro(
 					"setArquivoPopulacao, erro no valor passado, tam<=0...", 1);
+		
 		arquivoPopulacao = new File((pegaDiretorio + valor + ".pop"));
 		arquivoPopulacao.createNewFile();
+		
+		
+		
 
 	}
 
