@@ -104,6 +104,16 @@ public class Diversos {
         conexao.close(); 
 	}	
 	
+	/**	 sobrecarga do método escreverArquivo onde a variável caminho é do tipo File	 */
+	public  void escreverArquivo(File caminho, String conteudo) throws IOException {				
+				
+		FileWriter fw = new FileWriter(caminho, true);  //recebe um caminho de um arquivo
+        BufferedWriter conexao = new BufferedWriter(fw);  //da a permissço para esse aquivo ser escrito
+        conexao.write(conteudo);   //escreve no arquivo
+        conexao.newLine();  
+        conexao.close(); 
+	}	
+	
  	/** Funcao usada para retornar o numero de ocorrencias de um caracter em um
 	 * string.*/
 	public int numberOf(String str, char busca) {
