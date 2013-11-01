@@ -32,7 +32,10 @@ public class Teste {
 		
 		//objUsaValiMPI.exeVali_inst("gcd.c");
 		//objUsaValiMPI.exeVali_elem("4", "\"Master(0)\" \"Slave(1,2,3)\"");
-		
+		//objCentral.setDiretorio("gcd");
+		//objCentral.setArquivoVali_EvalOut("vali_out");
+	//	objUsaValiMPI.exeVali_eval("todos-nos","4", "\"Master(0)\" \"Escravo(1,2,3)\"");
+		//System.out.println(objCentral.arquivoVali_EvalOut.getPath());
 		}
 		
 	

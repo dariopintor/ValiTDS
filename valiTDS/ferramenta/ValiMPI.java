@@ -88,11 +88,10 @@ public class ValiMPI {
 				"-c",
 				"/home/labs/Software/ValiMPI/vali_exec/vali_exec "
 						+ ndadoTeste + " run " + nProcessos + " " + nomeFuncao
-						+ " " + dadoTeste + ";  echo '<enter>'; read" };
+						+ " " + dadoTeste + "; exit echo '<enter>'; read" };
 
 		Process proc =	Runtime.getRuntime().exec(cmd, null, null);
 		proc.waitFor();
-
 	}
 
 	/**
@@ -109,7 +108,7 @@ public class ValiMPI {
 				"-c",
 				"/home/labs/Software/ValiMPI/vali_eval/vali_eval "
 						+ criterio + " " + nProcess + " " + nomefuncoes
-						+ " > vali_eval.out;  echo '<enter>'; read" };
+						+ " > gcd/vali_eval.out; exit echo '<enter>'; read" };
 
 		Process proc =	Runtime.getRuntime().exec(cmd, null, null);
 		proc.waitFor();

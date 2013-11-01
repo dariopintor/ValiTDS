@@ -30,21 +30,19 @@ public class Populacao {
 	Individuo objIndividuo;
 	Diversos objDiversos;
 
+	
 	public Populacao() {
 		System.out.println("\nConstruindo populacao...");
 		objCentral = new Central();
 		objIndividuo = new Individuo();
 		objDiversos = new Diversos();
 	}
-
-	// _________________________________________________________________
-
-	/**
-	 * M�todo usado para gerar populacao inicial para o AG. Cria a populacao
-	 * inicial aleat�ria, com base nas configura��es fornecidas ou Cria a
+ 
+	
+	/** Metodo usado para gerar populacao inicial para o AG. Cria a populacao
+	 * inicial aleatoria, com base nas configuracoes fornecidas ou Cria a
 	 * populacao inicial baseado em um arquivo fornecido.
-	 * @throws IOException 
-	 */
+	 * @throws IOException */
 	public void geraPopulacaoInicial() throws IOException {
 		int retorno = 0;
 		// objDiversos.toFile("log_erro.log", "---geraPopulacaoInicial");
@@ -53,85 +51,61 @@ public class Populacao {
 		} else {
 			geraPopulacaoInicialArquivo();
 		}
-		// if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log",
-		// "---saindo geraPopulacaoInicial");
+		}
 
-	}
 
-	// _________________________________________________________________
-
-	/**
-	 * Cria a populacao inicial aleat�ria, com base nas configura��es fornecidas
-	 */
+	/** Cria a populacao inicial aleatoria, com base nas configuracoees fornecidas */
 	public void geraPopulacaoInicialAleatoria() {
 		System.out.println("\nGerando pop.inic.aleatoria");
-		int foi = 0;
+				
 		for (int contador = 0; contador < objCentral.tamanhoPopulacao;) {
-			objIndividuo.novo();
-
-		//	if (toPopulacao(contador, objIndividuo.representacao, objCentral.arquivoPopulacao))
-		//		contador++;
+			objIndividuo.novo();		
 		} // fim for
 
 	}
 
-	// _________________________________________________________________
+ 
 
 	/** Cria a populacao inicial baseado em arquivo fornecido. 
 	 * @throws IOException */
 	public void geraPopulacaoInicialArquivo() throws IOException {
 		//ler o arquivo da populacao inical ler linha por linha e passar cada conteudo da linha para o 
 		//novo da classe individuo
-		System.out.printf("\nGerando pop.inic.arquivo %s",
-				objCentral.arquivoPopulacaoInicial);
+		System.out.printf("\nGerando pop.inic.arquivo %s", objCentral.arquivoPopulacaoInicial);
 		
 		FileReader arq = new FileReader(objCentral.arquivoPopulacaoInicial);
 		BufferedReader lerArq = new BufferedReader(arq);
 	
-		if (lerArq == null) {
-			objDiversos
-					.erro("nao abriu o arquivo corretamente : arquivoPopulacaoInicial ",
-							1);
-		}
-
 		String linha = null;
 
 		linha = lerArq.readLine();
 		while (linha != null) { }
 		int contador = 0;
-		for (contador = 0; linha != null;) {
-
-			//fgets(linha, (int) (objCentral.tamanhoIndividuo * 2),
-			//		ptrPopulacaoInicial);
-			objDiversos.trim(linha);
+		
+		for (contador = 0; linha != null;) {		
+			linha = linha.trim();
+			
 			if (linha !=("")) {
 				objIndividuo.novo(linha);
-				if (toPopulacao(contador, objIndividuo.representacao, objCentral.arquivoPopulacao))
+				if (toPopulacao(contador, objIndividuo.representacao, objCentral.arquivoPopulacao) == true){
 					contador++;
+				}
 			}
 		} // fim for
 		objCentral.setTamanhoPopulacao(contador);
-		objCentral.recalculaPorcEvolucao();
-
-		// objCentral.printAll();
-		// pprova("Analise ctl...");
-
-		// fclose(ptrPopulacaoInicial);
+		objCentral.recalculaPorcEvolucao();	
 
 	}
+	 
 
-	// _________________________________________________________________
-
-	/**
-	 * M�todo usado para incluir um novo indiv�duo no arquivo de populacao. Caso
-	 * o indiv�duo j� exista na populacao a insercao n�o ser� realizada.
-	 */
-	boolean toPopulacao(int nro, String strIndividuo, String arquivo) {
-		/**/
+	/**Metodo usado para incluir um novo individuo no arquivo de populacao. Caso
+	 * o individuo ja exista na populacao a insercao nao sera realizada. */
+	boolean toPopulacao(int nro, String strIndividuo, File arquivo) {
+		
 		if ((strIndividuo.equals("")) || (strIndividuo.equals(216)))
 			System.out
 					.println(" to erro, tentando salvar individuo vazio ou 216,216");
-		/**/
+		
 		if (nro != 0) {
 			if (inPopulacao(strIndividuo, arquivo) != 0) {
 				return false;
@@ -152,10 +126,10 @@ public class Populacao {
 		return true;
 	}
 
-	// _________________________________________________________________
+	 
 
 	/**
-	 * M�todo usado para verificar se um individuo est� na populacao
+	 * Metodo usado para verificar se um individuo est� na populacao
 	 * representada pelo arquivo passado por argumento.
 	 */
 	// alocacoes de char * - ok
@@ -198,7 +172,7 @@ public class Populacao {
    return retorno;
 }
 
-	// _________________________________________________________________
+	 
 
 	/**
 	 * M�todo usado para avaliar a populacao do AG. Cada individuo � executado e
@@ -222,7 +196,7 @@ public class Populacao {
 		
 	}// fim avaliaPopulacao()
 
-	// _________________________________________________________________
+	 
 
 	/** M�todo usado para gerar a cobertura dos indiv�duos da populacao. */
 	int geraCoberturaIndividuo() {
@@ -254,9 +228,9 @@ public class Populacao {
 		return true;
 	}
 
-	// _________________________________________________________________
+	 
 
-	// _________________________________________________________________
+	 
 
 	/**
 	 * M�todo usado para gerar a cobertura dos indiv�duos da populacao com base
@@ -343,7 +317,7 @@ public class Populacao {
    return true;
 }  // fim geraCoberturaIndividuoValiMPI()
 
-	// _________________________________________________________________
+	 
 
 	/**
 	 * M�todo usado para armazenar desempenho de um indiv�duo, assim n�o precisa

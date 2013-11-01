@@ -37,15 +37,11 @@ public class Ferramenta {
 		objIndividuo = new Individuo();
 	}
 
-	// _________________________________________________________________
-
-	/**
-	 * Metodo usado para inicar a ferramenta adequada baseado nas informacoes de
+	
+	/**Metodo usado para inicar a ferramenta adequada baseado nas informacoes de
 	 * controle contidas em ctl.
-	 * 
 	 * @throws IOException
-	 * @throws InterruptedException 
-	 */
+	 * @throws InterruptedException */
 	public void prepareTool() throws IOException, InterruptedException {
 		String mpi_root;
 
@@ -58,29 +54,21 @@ public class Ferramenta {
 
 		System.out.println("Termina uso da ValiMPI.");
 	}
+ 
 
-	// _________________________________________________________________
-
-	/**
-	 * Metodo usado para obter a quantidade de elementos requeridos pelo
-	 * criterio configurado.
-	 * 
-	 * @throws IOException
-	 */
+	/*** Metodo usado para obter a quantidade de elementos requeridos pelo
+	 * criterio configurado. 
+	 * @throws IOException */
 	public double obtemElementosRequeridos() throws IOException {
 		System.out.println("\n\nObtendo elementos requeridos");
 
 		return obtemElementosRequeridosValiMPI();
 	}
 
-	// _________________________________________________________________
-
-	/**
-	 * Metodo usado para obter a quantidade de elementos requeridos para
-	 * criterios suportados pela ferramenta ValiMPI.
-	 * 
-	 * @throws IOException
-	 */
+	 
+	/** Metodo usado para obter a quantidade de elementos requeridos para
+	 * criterios suportados pela ferramenta ValiMPI. 
+	 * @throws IOException */
 	public double obtemElementosRequeridosValiMPI() throws IOException {
 		System.out.println("\n---obtemElementosValiMPI");
 
@@ -145,9 +133,8 @@ public class Ferramenta {
 
 	}
 
-	// _________________________________________________________________
-	/**
-	 * Metodo usado para avaliar o nro-esimo individuo da populacao. Recupera o
+	
+	/**Metodo usado para avaliar o nro-esimo individuo da populacao. Recupera o
 	 * nro-esimo individuo da populacao; Recupera os argumentos/entradas que
 	 * este representa; Separa os argumentos (argumento de chamada ou entrada de
 	 * teclado) conforme necessidade do programa; Executa o programa e avalia o
@@ -218,15 +205,12 @@ public class Ferramenta {
 	}
 
 
-	/**
-	 * Metodo usado para obter linha de cobertura que contem o desempenho do
+	/** Metodo usado para obter linha de cobertura que contem o desempenho do
 	 * individuo perante aos elementos requeridos.
-	 * @throws IOException 
-	 */
+	 * @throws IOException */
 	public void obtemCoberturaValiMPI(String linhaCobertura, int tamLinhaCobertura) throws IOException{
 		
 		int elem_coberto;
-		String frase = null;
 		int tamExeResultado = (int) ((objCentral.diretorio.length() + objCentral.criterioTesteValiMPI.length()) + 15);
 		File arquivoExeResultado = null;
 		String	linhaCoberturaLocal = null;
@@ -245,14 +229,12 @@ public class Ferramenta {
 			elCoberto = linha;
 			elCoberto = elCoberto.trim();
 			
-			frase = elCoberto;
-
 			if (elCoberto.equals("-- ELEMENTOS REQUERIDOS NÃO COBERTOS --")){
 				break;
 				}
 			
-
 			}
+		
 			lerPtrExeResultado.close();
 }
 }
