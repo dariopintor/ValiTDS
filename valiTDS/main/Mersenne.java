@@ -166,9 +166,9 @@ public class Mersenne
 //	}
 	
 	/**
-	* This main() outputs first 1000 generated numbers
+	* This Main() outputs first 1000 generated numbers
 	
-	public static void main(String args[])
+	public static void Main(String args[])
 	{ 
 		int j;
 

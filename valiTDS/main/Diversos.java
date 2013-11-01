@@ -60,7 +60,7 @@ public class Diversos {
 	}
 
  
-	/**	 * Funçço usada para enviar conteudo no final de um arquivo com informaçço
+	/**	 * Funçço usada para enviar conteudo no final de um arquivo com informacao
 	 * da hora.
 	 */
 	public  void toFile(String caminho, String conteudo) throws IOException {
@@ -70,24 +70,41 @@ public class Diversos {
 		DateFormat formato = new SimpleDateFormat("HH:mm:ss");
 		String formattedDate = formato.format(hora);
 		
-		FileWriter fw = new FileWriter(caminho, true);  //recebe um caminho de um arquivo
+		File arquivo = new File(caminho);	
+		
+		//cria o arquivo caso n exista
+		if(arquivo.exists() == false)	{
+			arquivo.createNewFile();
+		}
+		
+		FileWriter fw = new FileWriter(arquivo, true);  //recebe um caminho de um arquivo
         BufferedWriter conexao = new BufferedWriter(fw);  //da a permissço para esse aquivo ser escrito
         conexao.write(conteudo + "\t" + formattedDate);   //escreve no arquivo
         conexao.newLine();  
         conexao.close();  
 	}
 	 
-	
+
+	/**	 metodo usado pra escrever no final de um arquivo
+	 * caso o arquivo nao existe então é criado
+	 */
 	public  void escreverArquivo(String caminho, String conteudo) throws IOException {
-					
-		FileWriter fw = new FileWriter(caminho, true);  //recebe um caminho de um arquivo
+		
+		File arquivo = new File(caminho);	
+		
+		//cria o arquivo caso n exista
+		if(arquivo.exists() == false)	{
+			arquivo.createNewFile();
+		}
+		
+		FileWriter fw = new FileWriter(arquivo, true);  //recebe um caminho de um arquivo
         BufferedWriter conexao = new BufferedWriter(fw);  //da a permissço para esse aquivo ser escrito
         conexao.write(conteudo);   //escreve no arquivo
         conexao.newLine();  
         conexao.close(); 
 	}	
 	
- 	/** Funcao usada para retornar o nçmero de ocorrencias de um caracter em um
+ 	/** Funcao usada para retornar o numero de ocorrencias de um caracter em um
 	 * string.*/
 	public int numberOf(String str, char busca) {
 		int tam = str.length();
