@@ -1,13 +1,17 @@
 package algoritmoGenetico;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Formatter;
 
 import main.Diversos;
 import ferramenta.Central;
+import ferramenta.Ferramenta;
 
 /***************************************************************************
  populacao.cpp  -  description
@@ -25,10 +29,12 @@ import ferramenta.Central;
  ***************************************************************************/
 
 public class Populacao {
+	
 	/** objeto da classe central */
 	Central objCentral;
 	Individuo objIndividuo;
 	Diversos objDiversos;
+	Ferramenta objFerramenta;
 
 	
 	public Populacao() {
@@ -36,6 +42,7 @@ public class Populacao {
 		objCentral = new Central();
 		objIndividuo = new Individuo();
 		objDiversos = new Diversos();
+		objFerramenta = new Ferramenta();
 	}
  
 	
@@ -44,15 +51,15 @@ public class Populacao {
 	 * populacao inicial baseado em um arquivo fornecido.
 	 * @throws IOException */
 	public void geraPopulacaoInicial() throws IOException {
+			
 		int retorno = 0;
-		// objDiversos.toFile("log_erro.log", "---geraPopulacaoInicial");
+				// objDiversos.toFile("log_erro.log", "---geraPopulacaoInicial");
 		if (objCentral.arquivoPopulacao == null) {
 			geraPopulacaoInicialAleatoria();
 		} else {
 			geraPopulacaoInicialArquivo();
 		}
 		}
-
 
 	/** Cria a populacao inicial aleatoria, com base nas configuracoees fornecidas */
 	public void geraPopulacaoInicialAleatoria() {
@@ -61,10 +68,8 @@ public class Populacao {
 		for (int contador = 0; contador < objCentral.tamanhoPopulacao;) {
 			objIndividuo.novo();		
 		} // fim for
-
 	}
 
- 
 
 	/** Cria a populacao inicial baseado em arquivo fornecido. 
 	 * @throws IOException */
@@ -77,15 +82,12 @@ public class Populacao {
 		BufferedReader lerArq = new BufferedReader(arq);
 	
 		String linha = null;
-
-		linha = lerArq.readLine();
-		while (linha != null) { }
 		int contador = 0;
-		
+		linha = lerArq.readLine();		
 		for (contador = 0; linha != null;) {		
 			linha = linha.trim();
 			
-			if (linha !=("")) {
+				if (linha !=("")) {
 				objIndividuo.novo(linha);
 				if (toPopulacao(contador, objIndividuo.representacao, objCentral.arquivoPopulacao) == true){
 					contador++;
@@ -94,126 +96,100 @@ public class Populacao {
 		} // fim for
 		objCentral.setTamanhoPopulacao(contador);
 		objCentral.recalculaPorcEvolucao();	
-
 	}
 	 
 
 	/**Metodo usado para incluir um novo individuo no arquivo de populacao. Caso
-	 * o individuo ja exista na populacao a insercao nao sera realizada. */
-	boolean toPopulacao(int nro, String strIndividuo, File arquivo) {
+	 * o individuo ja exista na populacao a insercao nao sera realizada. 
+	 * @throws IOException */
+	boolean toPopulacao(int nro, String strIndividuo, File arquivo) throws IOException {
+		
+		String saida = ""; 
 		
 		if ((strIndividuo.equals("")) || (strIndividuo.equals(216)))
 			System.out
 					.println(" to erro, tentando salvar individuo vazio ou 216,216");
 		
 		if (nro != 0) {
-			if (inPopulacao(strIndividuo, arquivo) != 0) {
+			if (inPopulacao(strIndividuo, arquivo) == true) {
 				return false;
 			}
 		}		
 		
-		Formatter saida = new Formatter(arquivo);
-		saida.format("%5d : %s\n", nro, strIndividuo);
-		saida.close();
-
 		
-		File pop;
-		pop = fopen(arquivo, "a+");
-		fprintf(pop, "%5d : %s\n", nro, strIndividuo);
-		fflush(pop);
-		fclose(pop);
-		pop = NULL;
+		saida += saida.format("%5d : %s\n", nro , strIndividuo);
+		objDiversos.escreverArquivo(arquivo, saida);
+		
+		
 		return true;
 	}
 
-	 
+	/** Metodo usado para verificar se um individuo esta na populacao
+	 * representada pelo arquivo passado por argumento. 
+	 * @throws IOException */	
+	public boolean inPopulacao(String strIndividuo, File arquivo) throws IOException{	  
+		String linhaArquivo = null;
+		String pegaQuebra = null;
+		String [] quebraLinhaArq = null;
+		
+		FileReader fr = new FileReader(arquivo);
+		BufferedReader br = new BufferedReader(fr);
+		
+		linhaArquivo = br.readLine();		
+		
+		while (linhaArquivo != null){
+			quebraLinhaArq = linhaArquivo.split(":");
+			pegaQuebra = quebraLinhaArq[1].trim();
+						
+			if(pegaQuebra.equals(strIndividuo)){
+			return true;				
+			}
+			
+			linhaArquivo = br.readLine();
+		}
+		return false;		
+	}
 
-	/**
-	 * Metodo usado para verificar se um individuo est� na populacao
-	 * representada pelo arquivo passado por argumento.
-	 */
-	// alocacoes de char * - ok
-
-	int inPopulacao(String strIndividuo, String arquivo){
-   if(strIndividuo.length() <= 0)
-   return false;
-   
-   int retorno = false;
-
-   File pop;
-   pop = fopen(arquivo,"r");
-   if(pop == null) objDiversos.erro("nao abriu o arquivo de populacao corretamente", 1);
-   int pos = 0;
-   String linha = null, representacao = null;
-   
-   while(! feof(pop) )
-   {
-      //rastro("Entrou no while");
-      
-      fgets(linha, (int)(objCentral.tamanhoIndividuo + 20), pop);
-      pos = objDiversos.indexOf(linha, ':');
-      if(pos != -1)
-      {
-         strcpy(representacao, linha + pos + 1);
-         objDiversos.trim( & representacao);
-         if(strcmp(strIndividuo, representacao) == 0)
-         {
-            //fclose(pop);
-            //desalocaCharPtr (& representacao, (int) (objCentral.tamanhoIndividuo + 10), "inPopulacao", "representacao");
-            //desalocaCharPtr (& linha, (int) (objCentral.tamanhoIndividuo + 20), "inPopulacao", "linha");
-            retorno =  true;
-            break;
-         }
-      } // fim if
-   }// fim while
-
-   fclose(pop);
-   
-   return retorno;
-}
-
-	 
-
-	/**
-	 * M�todo usado para avaliar a populacao do AG. Cada individuo � executado e
-	 * o fitness � calculado com base no n�mero de elementos requeridos
+	/** Metodo usado para avaliar a populacao do AG. Cada individuo eh executado e
+	 * o fitness o calculado com base no numero de elementos requeridos
 	 * satisfeitos pela execucao do mesmo.
-	 */
-	public int avaliaPopulacao() {
-		 if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "---avaliaPopulacao");
+	 * @throws IOException */
+	public void avaliaPopulacao() throws IOException {
+		
+		 if(objCentral.geraLog != 0){
+			 objDiversos.toFile("log_erro.log", "---avaliaPopulacao");
+		 }
+		 
 		geraCoberturaIndividuo();
 		objDiversos.toFile("log_alocacoes.tst", "0, 0, 0, PProva");
 		objDiversos.toFile("log_alocacoes.tst", "1, 0, 0, PProva");
 		geraBonusIneditismo();
 		geraIneditismoPopulacao();
 
-		objCentral.geraLinhaPerda();
-		System.out.println("\n Linha de perda:\n" << objCentral.linhaPerda());
+//		objCentral.geraLinhaPerda();
+//		System.out.println("\n Linha de perda:\n" << objCentral.linhaPerda());
 
 		geraFitness();
-		if (objCentral.geraLog != 0)
-			objDiversos.toFile("log_erro.log", "---saindo avaliaPopulacao");
-		
+		if (objCentral.geraLog != 0){		
+		objDiversos.toFile("log_erro.log", "---saindo avaliaPopulacao");
+		}
 	}// fim avaliaPopulacao()
 
 	 
+	/** Metodo usado para gerar a cobertura dos individuos da populacao. 
+	 * @throws IOException */
+	public void geraCoberturaIndividuo() throws IOException {
 
-	/** M�todo usado para gerar a cobertura dos indiv�duos da populacao. */
-	int geraCoberturaIndividuo() {
-
-		if (objCentral.geraLog != 0 != 0)
-			objDiversos.toFile("log_erro.log", "------geraCoberturaIndividuo");
-		if (objCentral.criterioTeste.equals("Analise de Mutantes")) {
-			// se for ValiMPI
+		if (objCentral.geraLog != 0 ){
+					objDiversos.toFile("log_erro.log", "------geraCoberturaIndividuo");
+		}
+		
 			System.out.printf("\nGerando cobertura para ValiMPI...");
 			geraCoberturaIndividuoValiMPI();
-		} else {
-			System.out.printf("\nGerando cobertura para Proteum...");
-			geraCoberturaIndividuoProteum();
-		}
 		// Tanto geraCoberturaValiMPI como geraCoberturaProteum geram
-		// objCentral.coberturaCriterio.
-		objCentral.setCoberturaAtual(numberOf(objCentral.linhaCoberturaAtual,
+		// objCentral.coberturaCriterio
+			
+		objCentral.setCoberturaAtual(objDiversos.numberOf(objCentral.linhaCoberturaAtual,
 				'X') * 100 / objCentral.quantidadeElemento);
 
 		System.out.println("\nCobertura Gerada...");
@@ -223,20 +199,16 @@ public class Populacao {
 
 		geraCoberturaElementos();
 
-		if (objCentral.geraLog != 0)
+		if (objCentral.geraLog != 0) {
 			objDiversos.toFile("log_erro.log", "------saindo geraCoberturaIndividuo");
-		return true;
+		}
+		
 	}
+ 
 
-	 
-
-	 
-
-	/**
-	 * M�todo usado para gerar a cobertura dos indiv�duos da populacao com base
-	 * em arquivos gerados pela utilizacao da ferramenta ValiMPI.
-	 * 
-	 * Para cada individuo da populacao, deve obter a cobertura. Cerifica se ja
+	/**	 * Metodo usado para gerar a cobertura dos individuos da populacao com base
+	 * em arquivos gerados pela utilizacao da ferramenta ValiMPI. 
+	 * Para cada individuo da populacao, deve obter a cobertura. verifica se ja
 	 * esta no repositorio, se estiver, recupera a cobertura/desempenho do
 	 * repositorio. se nao estiver executa o programa instrumentado para cada
 	 * individuo. obtem a cobertura alcancada. Documenta a cobertura no arquivo
@@ -244,26 +216,19 @@ public class Populacao {
 	 * individuos com cobertura coberta por esse individuo e insere na lista
 	 * tabu senao nao faz nada.
 	 */
-	int geraCoberturaIndividuoValiMPI(){
-   individuo * indiv = NULL;
-   indiv = new individuo(& (*ctl) );
-   ferramenta * fr   = NULL;
-   fr = new ferramenta(& (*ctl) );
-   tabu * listaTabu = NULL;
-
-   if ( objCentral.ativaTabu )
+	public void geraCoberturaIndividuoValiMPI(){
+  
+  // tabu * listaTabu = NULL; //verificar depois a lista tabu
+		
+   if ( objCentral.ativaTabu. )
       listaTabu = new tabu( & (*ctl) );
 
-   char * linhaCobertura = NULL;
-   char * linhaCoberturaCriterio = NULL;
+   String linhaCobertura = null;
+   String linhaCoberturaCriterio = null;
 
-   alocaCharPtr( &linhaCobertura, (int) ( objCentral.quantidadeElemento + 20 ) ,"geraCoberturaIndividuoValiMPI", "linhaCobertura" );
-   alocaCharPtr( &linhaCoberturaCriterio, (int) ( objCentral.quantidadeElemento + 20 ) ,"geraCoberturaIndividuoValiMPI", "linhaCoberturaCriterio" );
-
-   memset(linhaCoberturaCriterio , '-', (int) ( objCentral.quantidadeElemento ) );
    //linhaCoberturaCriterio[ (int) objCentral.quantidadeElemento ] = '\0';
-   System.out.println( "\nAvaliando os Indiv�duos:\n" ;
-   //printf( "\nAvaliando os Indiv�duos:\n" );
+   System.out.println( "\nAvaliando os Individuos:\n") ;
+   //printf( "\nAvaliando os Individuos:\n" );
    sprintf(Comando, "rm %s -rf", objCentral.arquivoCoberturaIndividuo);
    objCentral.setComandPath(Comando);
    system( objCentral.comandPath );
@@ -271,7 +236,7 @@ public class Populacao {
    for (int contador = 0; contador < objCentral.tamanhoPopulacao; contador ++){
       //recupera individuo da populacao e inicializa a linha de cobertura.
       objIndividuo.representacaoload(contador); //ou contador+1);
-      memset (linhaCobertura, '-', (int) (objCentral.quantidadeElemento) );
+    
       //linhaCobertura [(int) objCentral.quantidadeElemento] = '\0';
       //System.out.println( "\nIndiv�duo " << contador << "- ";
 
@@ -280,8 +245,8 @@ public class Populacao {
       //if (true)
       {
          //deve executar o programa.
-         fr->evaluateIndividual( contador );
-         fr->obtemCoberturaValiMPI( & linhaCobertura, (int) ( objCentral.quantidadeElemento + 20 ) );
+        objFerramenta.evaluateIndividual( contador );
+        objFerramenta.obtemCoberturaValiMPI( linhaCobertura, (int) ( objCentral.quantidadeElemento + 20 ) );
 
          toRepositorio( contador, linhaCobertura );
       }  // fim if
@@ -307,53 +272,38 @@ public class Populacao {
    objCentral.atualizaLinhaCoberturas(linhaCoberturaCriterio);
    //objCentral.setCoberturaAtual( 0);
 
-
-
-   desalocaCharPtr( &linhaCobertura, (int) ( objCentral.quantidadeElemento + 20 ) ,"geraCoberturaIndividuoValiMPI", "linhaCobertura" );
-   desalocaCharPtr( &linhaCoberturaCriterio, (int) ( objCentral.quantidadeElemento + 20 ) ,"geraCoberturaIndividuoValiMPI", "linhaCoberturaCriterio" );
-   delete (indiv);
-   delete (fr);
-
-   return true;
-}  // fim geraCoberturaIndividuoValiMPI()
+   }  // fim geraCoberturaIndividuoValiMPI()
 
 	 
 
 	/**
-	 * M�todo usado para armazenar desempenho de um indiv�duo, assim n�o precisa
-	 * executa-lo novamente para obter sua cobertura.
-	 */
-	int toRepositorio(int nro, String desempenho) {
-		// gravaNew(indiv);
+	 * Metodo usado para armazenar desempenho de um individuo, assim não precisa
+	 * executa-lo novamente para obter sua cobertura.	 
+	 * @throws IOException */
+	public void toRepositorio(int nro, String desempenho) throws IOException {
+		String saida = "";
+		
 		if (nro >= objCentral.tamanhoPopulacao)
 			objDiversos.erro("extrapolou tamanho da populacao", 1);
 
 		objIndividuo.load(nro);
-
-		File ptrRepositorio;
-		ptrRepositorio = fopen(objCentral.arquivoRepositorio, "a");
-		fprintf(ptrRepositorio, "%s : %s\n",
-				objIndividuo.representacaorepresentacao, desempenho);
-		fflush(ptrRepositorio);
-		fclose(ptrRepositorio);
-
-		delete(indiv);
-		return true;
+						
+		saida += saida.format("%s : %s", objIndividuo.representacao, desempenho);
+		objDiversos.escreverArquivo(objCentral.arquivoRepositorio, saida);
+				
 	}
 
-	/**
-	 * M�todo usado para sobrepor duas linhas de coberturas.
-	 */
-	int sobrepoe(String cobertura, String desempenho) {
+	/** Metodo usado para sobrepor duas linhas de coberturas.	 */	
+	public void sobrepoe(String cobertura, String desempenho) {
 		int i = 0;
-		String coberturaLocal = "";
-		String mostrar;
+		String coberturaLocal = null;
+		String mostrar = null;
 		// alocaCharPtr(& coberturaLocal, ((int)objCentral.quantidadeElemento +
 		// 2), "sobrepoe", "coberturaLocal");
 		coberturaLocal = cobertura;
 		// System.out.println( "\nCobertura: "<< coberturaLocal
 		// <<"\nDesempenho: "<< desempenho;
-		if (coberturaLocal.equals(""))
+		if (coberturaLocal.equals(null))
 			coberturaLocal = desempenho;
 		else {
 			int tam = cobertura.length();
@@ -367,22 +317,12 @@ public class Populacao {
 		// fim else
 		coberturaLocal = mostrar;
 		cobertura = coberturaLocal;
-		// desalocaCharPtr(& coberturaLocal, ((int)objCentral.quantidadeElemento
-		// + 2), "sobrepoe", "coberturaLocal");
-		return 1;
-	}// fim sobrepoe
+		
+		}// fim sobrepoe
 
-	/** M�todo que evolui a populacao de indiv�duos. */
+	/** Metodo que evolui a populacao de individuos. */
 	public void evoluiPopulacao() {
-		// if(objCentral.geraLog != 0 != null) objDiversos.toFile("log_erro.log",
-		// "---EvoluiPopulacao");
-
-		// System.out.printf( Comando, TDS_PATH"removeFile.sh %s -rf",
-		// objCentral.arquivoPopulacaoTemporario );
-
-		// objCentral.setComandPath(Comando);
-		// system ( objCentral.comandPath );
-
+		
 		if (objCentral.quantidadeFitness > 0)
 			evolucaoPorFitness();
 
@@ -418,22 +358,16 @@ public class Populacao {
 
 	}
 
-	/**
-	 * M�todo usado para evoluir a populacao com base no fitness dos indiv�duos.
-	 */
-	int evolucaoPorFitness(){
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------evolucaoFitness");
-  individuo indiv1 = new individuo();
-  individuo  indiv2 = new individuo();
-  int cross = 0, mut = 0;
-  double sorteio = 0;
+	/**Metodo usado para evoluir a populacao com base no fitness dos individuos.*/
+	public void  evolucaoPorFitness(){
+		if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------evolucaoFitness");
+  		int cross = 0, mut = 0;
+  		double sorteio = 0;
+  		int contador = 0;
 
-  int contador = 0;
-
-  /*prova*/
-  //Apagar o arquivo evolucaio.fil caso seja a primeira evolucao da populacao, retirando assim,
-  //informa��es de execu��es anteriores.
-  if (objCentral.geracaoAtual == 0) system("rm evolucao.fil");
+   //Apagar o arquivo evolucaio.fil caso seja a primeira evolucao da populacao, retirando assim,
+  //informaces de execucoes anteriores.
+  		if (objCentral.geracaoAtual == 0) system("rm evolucao.fil");
   /*pprova*/
   objDiversos.toFile("evolucao.fil", "");
   objDiversos.toFile("evolucao.fil", "##############################################################");
@@ -444,13 +378,13 @@ public class Populacao {
   objDiversos.toFile("evolucao.fil", ErrorText);
   /**/
 
-  //contador possui a quantidade de indiv�duos gerados e aceitos na pr�xima geracao.
-  //Iteracao para gerar novo indiv�duo enquanto contador for menr que a quantidade configurada.
+  //contador possui a quantidade de individuos gerados e aceitos na proxima geracao.
+  //Iteracao para gerar novo individuo enquanto contador for menr que a quantidade configurada.
   for(contador=0; contador < objCentral.quantidadeFitness; )
     {
       sorteio =  objCentral.geraSorteio( objCentral.somatoriaFitness );
 
-      indiv1->load( (int) indiceIndividuoSorteado( sorteio ) );
+      objIndividuo.load( (int) indiceIndividuoSorteado( sorteio ) );
       /*prova* /
       sprintf(ErrorText, "\n1 Sorteio : %f : <%s>", sorteio, indiv1.representacao);
       printf(ErrorText);
@@ -458,82 +392,79 @@ public class Populacao {
 
       /*prova*/
       objDiversos.toFile("evolucao.fil", "--------------------------------------------------------------");
-      sprintf(ErrorText, "1 Sorteio : %f : <%s>", sorteio, indiv1->representacao);
+      sprintf(ErrorText, "1 Sorteio : %f : <%s>", sorteio, objIndividuo.representacao);
       objDiversos.toFile("evolucao.fil", ErrorText);
       /**/
 
       sorteio = objCentral.geraSorteio( objCentral.somatoriaFitness );
-      indiv2->load( (int) indiceIndividuoSorteado ( sorteio ) );
+      objIndividuo.load( (int) indiceIndividuoSorteado ( sorteio ) );
       /*prova* /
       sprintf(ErrorText, "\n2 Sorteio : %f : <%s>", sorteio, indiv2.representacao);
       printf(ErrorText);
       /**/
 
       /*prova*/
-      sprintf(ErrorText, "2 Sorteio : %f : <%s>", sorteio, indiv2->representacao);
+      sprintf(ErrorText, "2 Sorteio : %f : <%s>", sorteio, objIndividuo.representacao);
       objDiversos.toFile("evolucao.fil", ErrorText);
       /**/
 
       cross = genrand() % 100;
       if(cross <= objCentral.taxaCrossover * 100){
-        crossover( &(indiv1->representacao), &(indiv2->representacao) );
+        crossover( &(objIndividuo.representacao), &(objIndividuo.representacao) );
         /*prova*/
-        sprintf(ErrorText, "    op CROSSOVER : %s / %s", indiv1->representacao, indiv2->representacao);
+        sprintf(ErrorText, "    op CROSSOVER : %s / %s", objIndividuo.representacao, objIndividuo.representacao);
         objDiversos.toFile("evolucao.fil", ErrorText);
         /**/
         }
       mut   = genrand() % 100;
       if(mut <= objCentral.taxaMutacao * 100){
-        mutacao(indiv1->representacao);
+        mutacao(objIndividuo.representacao);
         /*prova*/
-        sprintf(ErrorText, "    op MUTACAO 1  : %s", indiv1->representacao);
+        sprintf(ErrorText, "    op MUTACAO 1  : %s", objIndividuo.representacao);
         objDiversos.toFile("evolucao.fil", ErrorText);
         /**/
         }
-      if( toPopulacao( contador, indiv1->representacao, objCentral.arquivoPopulacaoTemporario ) ){
+      if( toPopulacao( contador, objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
         contador ++;
         /*prova*/
-        sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, indiv1->representacao);
+        sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
         objDiversos.toFile("evolucao.fil", ErrorText);
         /**/
         }
       if(contador < objCentral.quantidadeFitness ){
         mut   = genrand() % 100;
         if(mut <= objCentral.taxaMutacao * 100){
-          mutacao(indiv2->representacao);
+          mutacao(objIndividuo.representacao);
           /*prova*/
-          sprintf(ErrorText, "    op MUTACAO 2  : %s", indiv2->representacao);
+          sprintf(ErrorText, "    op MUTACAO 2  : %s", objIndividuo.representacao);
           objDiversos.toFile("evolucao.fil", ErrorText);
           /**/
           }
-        if( toPopulacao( contador, indiv2->representacao, objCentral.arquivoPopulacaoTemporario ) ){
+        if( toPopulacao( contador, objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
           contador ++;
           /*prova*/
-          sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, indiv2->representacao);
+          sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
           objDiversos.toFile("evolucao.fil", ErrorText);
           /**/
           }
         }// fim if
     } // fim for fitness
-  delete (indiv1);
-  delete (indiv2);
+  
   if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------saindo evolucaoFitness");
-  return true;
-
+  
 }
 
-	/**
-	 * M�todo retorna o �ndice do indiv�duo sorteado. Com base na somat�ria do
-	 * fitness e na ordem dos indiv�duos, simulando o m�todo de selecao da
-	 * roleta. Retorna qual o indiv�duo possui est� na faixa sorteada.
-	 */
-	int indiceIndividuoSorteado(double sorteio){
-  double superior = 0;
-  int tamLinha = nroEspacos( (int) objCentral.tamanhoPopulacao ) + 30;
-  String linha = null;
-    File ptrFitness;
-  ptrFitness = fopen( objCentral.arquivoFitness, "r" );
-  if(ptrFitness == NULL){
+	/** Metodo retorna o indice do individuo sorteado. Com base na somatoria do
+	 * fitness e na ordem dos individuos, simulando o metodo de selecao da
+	 * roleta. Retorna qual o individuo possui esta na faixa sorteada.*/
+	public void indiceIndividuoSorteado(double sorteio){
+		double superior = 0;
+		int tamLinha = nroEspacos( (int) objCentral.tamanhoPopulacao ) + 30;
+		String linha = null;
+		File ptrFitness;
+		ptrFitness = fopen( objCentral.arquivoFitness, "r" );
+		
+		if(ptrFitness == NULL){
       sprintf(ErrorText,"nao abriu o arquivo de Variacao de fitness : %s", objCentral.arquivoVariacaoFitness);
       objDiversos.erro(ErrorText,1);
     }
@@ -556,7 +487,7 @@ public class Populacao {
   return -1;
 }
 
-	/** M�todo usado para aplicar mutacao em um indiv�duo. */
+	/** Metodo usado para aplicar mutacao em um individuo. */
 	int mutacao(String indiv) {
 		int i = 0, mudou = 0, posMut = rand() % strlen(indiv);
 		for (; mudou == 0;) {
@@ -593,10 +524,10 @@ public class Populacao {
 	}
 
 	/**
-	 * M�todo que aplica operador crossover nos indiv�duos representados por
+	 * Metodo que aplica operador crossover nos individuos representados por
 	 * indiv1 e indiv2
 	 */
-	int crossover( String  indiv1, char  indiv2 ){
+public void	int crossover( String  indiv1, char  indiv2 ){
   int i=0, ocorre=0, posCross=0, tamTipo=0, inicTipo=0, tamFormat = 0;
   char * block = NULL, * indivAux = NULL;
 
@@ -649,12 +580,11 @@ public class Populacao {
       }// fim if
     }// fim for
   //  rastro("saiu -  crossover");
-  desalocaCharPtr( &block , (int) (objCentral.tamanhoIndividuo + 5), " crossover", "block" );
-  desalocaCharPtr( &indivAux , (int) (objCentral.tamanhoIndividuo + 5), " crossover", "indivAux" );
-  return true;
+ 
+ 
 }
 
-	/** M�todo usado para gerar o fitness da populacao */
+	/** Metodo usado para gerar o fitness da populacao */
 	int geraFitness(){
   if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------geraFitness");
 
@@ -703,7 +633,7 @@ public class Populacao {
   return true;
 }
 
-	/** M�todo usado para realizar evolucao por elitismo. */
+	/** Metodo usado para realizar evolucao por elitismo. */
 	int evolucaoPorElitismo(){
   if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------evolucaoIneditismo");
 
@@ -721,24 +651,24 @@ public class Populacao {
     {
       posicao = melhorFitAntNaoEm( objCentral.arquivoPopulacaoTemporario );
       if (posicao != -1){
-        indiv1->load( (int) posicao );
+        objIndividuo.load( (int) posicao );
         /*prova*/
-        sprintf(ErrorText, " Ineditismo do indiv pos %0.0f : %s", posicao, indiv1->representacao);
+        sprintf(ErrorText, " Ineditismo do indiv pos %0.0f : %s", posicao, objIndividuo.representacao);
         //objDiversos.toFile("evolucao.fil", ErrorText);
         /**/
       }
       else{
-        indiv1->novo();
+        objIndividuo.novo();
         /*prova*/
-	  sprintf(ErrorText, " Ineditismo do novo indiv : %s", indiv1->representacao);
+	  sprintf(ErrorText, " Ineditismo do novo indiv : %s", objIndividuo.representacao);
 	  //objDiversos.toFile("evolucao.fil", ErrorText);
 	  /**/
 	}
-      if ( toPopulacao( contador , indiv1->representacao, objCentral.arquivoPopulacaoTemporario ) )
+      if ( toPopulacao( contador , objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) )
 	{
 	  contador ++;
 	  /*prova*/
-	  sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, indiv1->representacao);
+	  sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
 	  //objDiversos.toFile("evolucao.fil", ErrorText);
 	  /**/
 	}
@@ -750,7 +680,7 @@ public class Populacao {
 }
 
 	/** Metodo usado para obter o indice do individuo a ser mantido */
-	double melhorInedAntNaoEm ( String arquivoAuxiliar ){
+	public double melhorInedAntNaoEm ( String arquivoAuxiliar ){
   File ptrIneditismo;
   individuo * indiv = new individuo( &(* ctl) );
 
@@ -789,7 +719,7 @@ public class Populacao {
 }
 
 	/** Metodo usado para obter o indice do individuo a ser mantido */
-	double melhorFitAntNaoEm( String arquivoAuxiliar ){
+	public double melhorFitAntNaoEm( String arquivoAuxiliar ){
    File ptrFitness;
    individuo * indiv = new individuo( &(* ctl) );
 
@@ -825,8 +755,8 @@ public class Populacao {
    return posMelhor;
 }
 
-	/** M�todo usado para calcular o ineditismo da populacao. */
-	int geraBonusIneditismo(){
+	/** Metodo usado para calcular o ineditismo da populacao. */
+	public void  geraBonusIneditismo(){
 
   if( (ctl)->geraLog) objDiversos.toFile("log_erro.log", "------geraIneditismo");
   char * elemCobertura = NULL;
@@ -852,14 +782,7 @@ public class Populacao {
     ponto2 = objDiversos.indexOf(elemCobertura,':');
     strcpy(elemCobertura, elemCobertura + ponto2 + 1);
     objDiversos.trim(&elemCobertura);
-    /** /
-    if(ctl->pausaGeracao)
-    {
-      System.out.printf("\n linha lida tam %d / tamPopulacao %d \n<%s>", (int) ctl->tamanhoPopulacao, strlen(elemCobertura), elemCobertura);
-      //pprova("Analisar, aqui deu pau por terem tamanhos diferentes...");
-    }
-    /**/
-
+    
     if( strlen(elemCobertura) != objCentral.tamanhoPopulacao ){
       sprintf(ErrorText, "Erro no calculo da bonificacao p/Elemento %d\nTamanho da linha de cobertura do Elemento = %d, deveria ser %0.0f \n linha de cobertura : '%s'", contador, strlen(elemCobertura), objCentral.tamanhoPopulacao, elemCobertura);
       objDiversos.erro(ErrorText , 1);
@@ -879,12 +802,12 @@ public class Populacao {
   desalocaCharPtr( &elemCobertura , tamElCob, " geraIneditismo", "elemCobertura" );
 
   if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------saindo geraIneditismo");
-  return true;
+  
 }
 
 	/**
-	 * M�todo usado para calcular a cobertura dos elementos, com base na
-	 * cobertura dos indiv�duos.
+	 * Metodo usado para calcular a cobertura dos elementos, com base na
+	 * cobertura dos individuos.
 	 */
 	int geraCoberturaElementos(){
 //  Luciano Petinati Ferreira
@@ -942,13 +865,12 @@ public class Populacao {
   desalocaCharPtr( &linhaCobElem , (int)(objCentral.tamanhoPopulacao + 20 ), " geraCoberturaElemento", "linhaCobElem" );
 
   if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "***------saindo geraCoberturaElementos");
-
-  return true;
+  
 }
 
 	/**
-	 * M�todo usado para evoluir populacao com base no �ndice de ineditismo do
-	 * indiv�duo.
+	 * Metodo usado para evoluir populacao com base no indice de ineditismo do
+	 * individuo.
 	 */
 	int evolucaoPorIneditismo(){
   if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------evolucaoIneditismo");
@@ -964,23 +886,23 @@ public class Populacao {
   for(contador = (int)( objCentral.quantidadeFitness + objCentral.quantidadeElitismo ); contador < (int) ( objCentral.quantidadeFitness + objCentral.quantidadeElitismo + objCentral.quantidadeIneditismo ); ){
     posicao = melhorInedAntNaoEm( objCentral.arquivoPopulacaoTemporario );
     if (posicao != -1){
-      indiv1->load( (int) posicao );
+      objIndividuo.load( (int) posicao );
       /*prova*/
-      sprintf(ErrorText, " Ineditismo do indiv pos %0.0f : %s", posicao, indiv1->representacao);
+      sprintf(ErrorText, " Ineditismo do indiv pos %0.0f : %s", posicao, objIndividuo.representacao);
       //objDiversos.toFile("evolucao.fil", ErrorText);
       /**/
     }
     else{
-      indiv1->novo();
+      objIndividuo.novo();
       /*prova*/
-      sprintf(ErrorText, " Ineditismo do novo indiv : %s", indiv1->representacao);
+      sprintf(ErrorText, " Ineditismo do novo indiv : %s", objIndividuo.representacao);
       //objDiversos.toFile("evolucao.fil", ErrorText);
       /**/
     }
-    if ( toPopulacao( contador , indiv1->representacao, objCentral.arquivoPopulacaoTemporario ) ){
+    if ( toPopulacao( contador , objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
       contador ++;
       /*prova*/
-      sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, indiv1->representacao);
+      sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
       //objDiversos.toFile("evolucao.fil", ErrorText);
       /**/
     }
@@ -991,8 +913,8 @@ public class Populacao {
 }
 
 	/**
-	 * M�todo usado para gerar um arquivo que reflita os dados de uma populacao
-	 * de forma entend�vel/decodificada.
+	 * Metodo usado para gerar um arquivo que reflita os dados de uma populacao
+	 * de forma entendivel/decodificada.
 	 */
 	public int decodificaPopulacao(File  origem, String  destino){
    //if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "---decodificaPopulacao");
@@ -1067,97 +989,6 @@ public class Populacao {
   return true;
 }
 
-	/**
-	 * Este m�todo � usado para limpar e regerar o diret�rio de pool e seus
-	 * arquivos. Os arquivos s�o gerados para serem importados e executados para
-	 * serem avaliados
-	 */
-	int geraPool(){
-   //Recriando o diretorio de pool.
-   sprintf(Comando, TDS_PATH"removeFile.sh %s; mkdir %s ", objCentral.diretorioPool , objCentral.diretorioPool);
-   objCentral.setComandPath(Comando);
-   system( objCentral.comandPath );
-
-
-   //gerando arquivos
-   int tamFormato = strlen(objCentral.formatoIndividuo);
-   char * arqTecN = NULL, * arqInputN = NULL;
-   alocaCharPtr( &arqTecN , 200, "geraPool", "arqTecN");
-   alocaCharPtr( &arqInputN , 200, "geraPool", "arqInputN");
-
-   individuo * indiv = NULL;
-   indiv = new individuo(& (*ctl) );
-
-   char * argMascarado  = NULL;
-   alocaCharPtr( &argMascarado,  (int) ( objCentral.tamanhoMaximoArgumento ), "geraPool", "argMascarado" );
-   char * argPuroStr = NULL;
-   alocaCharPtr (&argPuroStr, (int) ( objCentral.tamanhoMaximoArgumento ), "geraPool", "argPuroStr" );
-
-   File tecF, * inputF;
-
-   for (int contador = 1; contador <= objCentral.tamanhoPopulacao; contador++){
-      memset(arqTecN, '\0', 200);
-      sprintf(arqTecN, "%stec%d.tes", objCentral.diretorioPool, contador);
-      tecF = fopen(arqTecN,"w");
-
-      memset(arqInputN , '\0', 200);
-      sprintf(arqInputN, "%sinput%d.tes", objCentral.diretorioPool, contador);
-      inputF = fopen(arqInputN, "w");
-
-      objIndividuo.representacaoload(contador -1);
-
-      for (int i = 0; i < tamFormato ; i++){
-         //inicBlock = objCentral.inicioTipo(argCont);
-         memset( argMascarado,     '\0', (int) objCentral.tamanhoMaximoArgumento );
-         memset( argPuroStr  ,     '\0', (int) objCentral.tamanhoMaximoArgumento );
-         memcpy( argMascarado, objIndividuo.representacaorepresentacao + ( objCentral.inicioTipo( i ) ), objCentral.tamanhoTipo( i ) );
-         argMascarado[ (int) objCentral.tamanhoMaximoArgumento  - 1] = '\0'; //Modelo
-
-         switch( objCentral.formatoIndividuo[i] ){
-            case 'I': sprintf(argPuroStr,"%d", objIndividuo.representacaodecode_block_int(argMascarado) );    break;
-            case 'D': sprintf(argPuroStr,"%f", objIndividuo.representacaodecode_block_double(argMascarado) ); break;
-            case 'F': sprintf(argPuroStr,"%f", objIndividuo.representacaodecode_block_float(argMascarado) );  break;
-            case 'C': strcpy(argPuroStr, argMascarado); 	                               break;
-            case 'S':{
-               int pos = objDiversos.indexOf(argMascarado, (char) 216);
-               if(pos == 0) printf ("Valor do argumento string eh vazio...ignorando... avaliar impacto");
-               if(pos != -1) argMascarado[pos] = '\0';
-               strcpy(argPuroStr, argMascarado );
-               break;
-               }
-
-            }// fim switch
-         if( i < objCentral.numeroArgumentos ){
-            fprintf(inputF, "%s\n", argPuroStr);
-            fflush(inputF);
-            }
-            else{
-            fprintf(tecF, "%s\n", argPuroStr);
-            fflush(tecF);
-            }
-         }//fim for
-      fclose(tecF);
-      fclose(inputF);
-    } // fim for
-
-   //Importanto os arquivos...
-   if( objCentral.geracaoAtual > 0){
-      sprintf(Comando, "tcase -d testSection");
-      objCentral.setComandPath(Comando);
-      system( objCentral.comandPath );
-    }
-    sprintf( Comando, "tcase -poke -E exe -DD %s -f 1 -t %d testSection", objCentral.diretorioPool, objCentral.tamanhoPopulacao );
-    objCentral.setComandPath(Comando);
-    system( objCentral.comandPath );
-
-   desalocaCharPtr( &arqTecN , 200, "geraPool", "arqTecN");
-   desalocaCharPtr( &arqInputN , 200, "geraPool", "arqInputN");
-   desalocaCharPtr( &argMascarado,  (int) ( objCentral.tamanhoMaximoArgumento ), "geraPool", "argMascarado" );
-   desalocaCharPtr (&argPuroStr, (int) ( objCentral.tamanhoMaximoArgumento ), "geraPool", "argPuroStr" );
-
-   return true;
-
-} // fim geraPool
 
 	/**
 	 * Este m�todo retorna o valor do bonus para os indiv�duos que cobriram o
