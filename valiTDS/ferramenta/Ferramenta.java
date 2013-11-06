@@ -30,11 +30,12 @@ public class Ferramenta {
 	Individuo objIndividuo;
 
 	public Ferramenta() {
-		// System.out.println( "\nConstruindo ferramenta...";
+		 System.out.println( "\nConstruindo ferramenta...");
 		objCentral = new Central();
 		objDiversos = new Diversos();
 		objUsaValiMPI = new ValiMPI();
 		objIndividuo = new Individuo();
+		
 	}
 
 	
@@ -61,7 +62,6 @@ public class Ferramenta {
 	 * @throws IOException */
 	public double obtemElementosRequeridos() throws IOException {
 		System.out.println("\n\nObtendo elementos requeridos");
-
 		return obtemElementosRequeridosValiMPI();
 	}
 
@@ -78,7 +78,9 @@ public class Ferramenta {
 		File arquivoElementos;
 		arquivoElementos = new File("arquivoElementos.elem");
 		arquivoElementos.createNewFile();
-
+		
+		objCentral.criterioTeste = "Todos os Arcos";
+		
 		if (objCentral.criterioTeste.equals("Todos os Arcos")) {
 			objDiversos.copyFile((dir_elem_req + "todas-arestas.req"),
 					arquivoElementos);
@@ -86,39 +88,37 @@ public class Ferramenta {
 		}
 
 		else if (objCentral.criterioTeste.equals("Todos os Nos")) {
-			objDiversos.copyFile((dir_elem_req + "todos-nos.req"),
-					arquivoElementos);
+			objDiversos.copyFile((dir_elem_req + "todos-nos.req"), arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todos-nos");
+			
 		} else if (objCentral.criterioTeste.equals("Todos os Potenciais Usos")) {
-			objDiversos.copyFile((dir_elem_req + "todos-p-usos.req"),
-					arquivoElementos);
+			objDiversos.copyFile((dir_elem_req + "todos-p-usos.req"), arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todos-p-usos");
-		} else if (objCentral.criterioTeste
-				.equals("Todos os Usos Computacionais")) {
-			objDiversos.copyFile((dir_elem_req + "todos-c-usos.req"),
-					arquivoElementos);
+			
+		} else if (objCentral.criterioTeste	.equals("Todos os Usos Computacionais")) {
+			objDiversos.copyFile((dir_elem_req + "todos-c-usos.req"), arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todos-c-usos");
-		} else if (objCentral.criterioTeste
-				.equals("Todos os Usos de Sincronismo")) {
-			objDiversos.copyFile((dir_elem_req + "todos-s-usos.req"),
-					arquivoElementos);
+			
+		} else if (objCentral.criterioTeste	.equals("Todos os Usos de Sincronismo")) {
+			objDiversos.copyFile((dir_elem_req + "todos-s-usos.req"), arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todos-s-usos");
+			
 		} else if (objCentral.criterioTeste.equals("Todos os Nos S")) {
-			objDiversos.copyFile((dir_elem_req + "todos-nosS.req"),
-					arquivoElementos);
+			objDiversos.copyFile((dir_elem_req + "todos-nosS.req"),	arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todos-nosS");
+			
 		} else if (objCentral.criterioTeste.equals("Todos os Nos R")) {
-			objDiversos.copyFile((dir_elem_req + "todos-nosR.req"),
-					arquivoElementos);
+			objDiversos.copyFile((dir_elem_req + "todos-nosR.req"),	arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todos-nosR");
+			
 		} else if (objCentral.criterioTeste.equals("Todos as Arestas S")) {
 			objDiversos.copyFile((dir_elem_req + "todas-arestasS.req"),
 					arquivoElementos);
 			objCentral.setCriterioTesteValiMPI("todas-arestasS");
 		}
 
-		// //objDiversos.copyFile((dir_elem_req + "todos-nos.req"),
-		// arquivoElementos);
+		objDiversos.copyFile((dir_elem_req + "todos-nos.req"),
+		 arquivoElementos);
 
 		if (arquivoElementos.length() == 0) {
 			objDiversos
@@ -126,9 +126,10 @@ public class Ferramenta {
 							1);
 		}
 
-		quantidadeElemReq = objDiversos.quantidadeLinhas(arquivoElementos) - 2; 
+		//menos 2 são as duas primeiras linhas do arq. que n se refere aos elementos
+		quantidadeElemReq = objDiversos.quantidadeLinhas(arquivoElementos)- 2; 
 		System.out.print("\n--- Saindo de obtemElementosValiMPI");
-
+				
 		return quantidadeElemReq;
 
 	}
@@ -208,33 +209,89 @@ public class Ferramenta {
 	/** Metodo usado para obter linha de cobertura que contem o desempenho do
 	 * individuo perante aos elementos requeridos.
 	 * @throws IOException */
-	public void obtemCoberturaValiMPI(String linhaCobertura, int tamLinhaCobertura) throws IOException{
+	public void obtemCoberturaValiMPI() throws IOException{
 		
-		int elem_coberto;
-		int tamExeResultado = (int) ((objCentral.diretorio.length() + objCentral.criterioTesteValiMPI.length()) + 15);
-		File arquivoExeResultado = null;
-		String	linhaCoberturaLocal = null;
-		String linha = "";
-				
-		//comandos para leitura do arq. da cobertura
-		FileReader  ptrExeResultado = new FileReader("gcd/vali_eval.out");
-		BufferedReader lerPtrExeResultado = new BufferedReader(ptrExeResultado);
-		String elCoberto = null;
+		String[] vetorPegaElementos;
+		vetorPegaElementos = pegaElementos("arquivoElementos.elem");
+
+		String[] vetorPegaElementosCobertos;
+		vetorPegaElementosCobertos = pegaElementosCobertos("gcd/vali_eval.out");		
+		int [] saida = new int [vetorPegaElementos.length];
+		String linhaCoberturaAtual = "";
+		
+		for (int i = 0; i < vetorPegaElementos.length; i++) {
+		for (int j = 0; j < vetorPegaElementosCobertos.length; j++) {
+			if (vetorPegaElementos[i].equals(vetorPegaElementosCobertos[j])) {
+				saida [i] = 1 ;						
+			}								
+		}// termina for para i
+		}// termina for para j			
+		}
+	
+	
+	/**Pega os elementos requiridos presente em "arquivoElementos.elem" e c
+	 *coloca em um vetor	 
+	 * @throws IOException */
+	public  String [] pegaElementos (String arquivo) throws IOException{
+		
+		
+		String [] vetor = new String [(int) objCentral.quantidadeElemento];
+		String linhaArqElementos = null;
+		int contLinhaElementos = 0;
+		
+		// permissoes de leitura do arquivo de elementos
+		FileReader arqElemementos = new FileReader(arquivo);
+		BufferedReader lerArqElemementos = new BufferedReader(arqElemementos);
 		
 		// le a primeira linah do arquivo 
-		linha = lerPtrExeResultado.readLine();
-		while (linha != null)
-		{
-			//block contera o numero do elemento requerido satisfeito
-			elCoberto = linha;
-			elCoberto = elCoberto.trim();
-			
-			if (elCoberto.equals("-- ELEMENTOS REQUERIDOS NÃO COBERTOS --")){
-				break;
-				}
-			
+		linhaArqElementos = lerArqElemementos.readLine();
+			for( int i = 0; linhaArqElementos != null; ){
+				contLinhaElementos++;				
+				//pega os elementos a partir da segunda linha do arquivo
+				if(contLinhaElementos>2){
+					vetor[i]=linhaArqElementos.trim();
+					i++;
+				}				
+				linhaArqElementos = lerArqElemementos.readLine();		
+			}				
+			lerArqElemementos.close();		
+		return vetor;
+	}
+	
+	/**Pega os elementos requiridos cobertos presente em "gcd/vali_eval.out" e 
+	 * coloca em um vetor
+	 * @throws IOException */
+	public  String[] pegaElementosCobertos(String arquivo)	throws IOException {
+		String[] vetor = new String[62];
+		String linhaArqElemcobertos = null;
+		int contLinhaElementos = 0;
+		String[] quebraLinha = null;
+		// permissoes de leitura do arquivo que contém os elem cobertos
+		FileReader arqElemCobertos = new FileReader(arquivo);
+		BufferedReader lerElemCobertos = new BufferedReader(arqElemCobertos);
+
+		linhaArqElemcobertos = lerElemCobertos.readLine();
+		for (int i = 0; linhaArqElemcobertos != null; ) {
+			contLinhaElementos++;			
+			//para quando alcaçar a linha elementos nao cobertos
+			if(linhaArqElemcobertos.equals("-- ELEMENTOS REQUERIDOS NÃO COBERTOS --")){
+						break;
+			}			
+			//iniccia a partir da segunda linha
+			if(objCentral.criterioTeste.equals("Todos os Usos de Sincronismo")
+				|| objCentral.criterioTeste.equals("Todos os Usos Computacionais")
+				||objCentral.criterioTeste.equals("Todos os Potenciais Usos")){
+				
+				quebraLinha = linhaArqElemcobertos.split("> c");
+				vetor[i] = quebraLinha[0].trim();		
+			}else{
+			quebraLinha = linhaArqElemcobertos.split(",");
+			vetor[i] = quebraLinha[0].trim();				
 			}
+			linhaArqElemcobertos = lerElemCobertos.readLine();
+		}// fim while
 		
-			lerPtrExeResultado.close();
-}
+		lerElemCobertos.close();
+		return vetor;
+	}
 }
