@@ -120,7 +120,7 @@ public class Populacao {
 		}		
 		
 		
-		saida += saida.format("%5d : %s\n", nro , strIndividuo);
+		saida += String.format("%5d : %s\n", nro , strIndividuo);
 		objDiversos.escreverArquivo(arquivo, saida);
 		
 		
@@ -145,19 +145,23 @@ public class Populacao {
 			pegaQuebra = quebraLinhaArq[1].trim();
 						
 			if(pegaQuebra.equals(strIndividuo)){
+			br.close();
 			return true;				
 			}
 			
 			linhaArquivo = br.readLine();
 		}
+		
+		br.close();
 		return false;		
 	}
 
 	/** Metodo usado para avaliar a populacao do AG. Cada individuo eh executado e
 	 * o fitness o calculado com base no numero de elementos requeridos
 	 * satisfeitos pela execucao do mesmo.
-	 * @throws IOException */
-	public void avaliaPopulacao() throws IOException {
+	 * @throws IOException 
+	 * @throws InterruptedException */
+	public void avaliaPopulacao() throws IOException, InterruptedException {
 		
 		 if(objCentral.geraLog != 0){
 			 objDiversos.toFile("log_erro.log", "---avaliaPopulacao");
@@ -180,8 +184,9 @@ public class Populacao {
 
 	 
 	/** Metodo usado para gerar a cobertura dos individuos da populacao. 
-	 * @throws IOException */
-	public void geraCoberturaIndividuo() throws IOException {
+	 * @throws IOException 
+	 * @throws InterruptedException */
+	public void geraCoberturaIndividuo() throws IOException, InterruptedException {
 
 		if (objCentral.geraLog != 0 ){
 					objDiversos.toFile("log_erro.log", "------geraCoberturaIndividuo");
@@ -218,8 +223,10 @@ public class Populacao {
 	 * verifica se deve ser incluido na lista tabu. se tiver, substitui todos os
 	 * individuos com cobertura coberta por esse individuo e insere na lista
 	 * tabu senao nao faz nada.
+	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public void geraCoberturaIndividuoValiMPI(){
+	public void geraCoberturaIndividuoValiMPI() throws IOException, InterruptedException{
       
    String linhaCobertura = null;
    String linhaCoberturaCriterio = null;
@@ -236,7 +243,7 @@ public class Populacao {
            //verifica necessidade de execucao
       if ( (objCentral.geracaoAtual == 0) ||
     		  (objCentral.geracaoAtual >= objCentral.geracoesComRepositorio )
-    		  || (objCentral.inRepositorio(objIndividuo.representacao,  linhaCobertura)) ) {   //if (true)     {
+    		  || (objCentral.inRepositorio(objIndividuo.representacao,  linhaCobertura) == linhaCobertura) ) {   //if (true)     {
          //deve executar o programa.
         objFerramenta.evaluateIndividual( contador );
         objFerramenta.obtemCoberturaValiMPI( linhaCobertura, (int) ( objCentral.quantidadeElemento + 20 ) );
@@ -276,7 +283,7 @@ public class Populacao {
 
 		objIndividuo.load(nro);
 						
-		saida += saida.format("%s : %s", objIndividuo.representacao, desempenho);
+		saida += String.format("%s : %s", objIndividuo.representacao, desempenho);
 		objDiversos.escreverArquivo(objCentral.arquivoRepositorio, saida);
 				
 	}
@@ -358,12 +365,12 @@ public class Populacao {
   objDiversos.toFile("evolucao.fil", "##############################################################");
   String saida = null;
   objDiversos.toFile("evolucao.fil", 
-		  saida.format("Evolucao Geracao :%d", (int) objCentral.geracaoAtual));
+		  String.format("Evolucao Geracao :%d", (int) objCentral.geracaoAtual));
   
   objDiversos.toFile("evolucao.fil", 
 		  "==============================================================");
   
-  saida =  saida.format("EVOLUCAO POR FITNESS (%.0f) / somatoriaFitness = %.0f", (int)objCentral.quantidadeFitness , objCentral.somatoriaFitness);
+  saida =  String.format("EVOLUCAO POR FITNESS (%.0f) / somatoriaFitness = %.0f", (int)objCentral.quantidadeFitness , objCentral.somatoriaFitness);
   objDiversos.toFile("evolucao.fil", saida);
   /**/
 
@@ -377,13 +384,13 @@ public class Populacao {
      
       objDiversos.toFile("evolucao.fil", 
     		  "--------------------------------------------------------------");
-      saida = saida.format("1 Sorteio : %f : %s", sorteio, objIndividuo.representacao);
+      saida = String.format("1 Sorteio : %f : %s", sorteio, objIndividuo.representacao);
       objDiversos.toFile("evolucao.fil", saida);
       /**/
 
       sorteio = objCentral.geraSorteio( objCentral.somatoriaFitness );
       objIndividuo.load( (int) indiceIndividuoSorteado ( sorteio ) );
-      saida = saida.format("2 Sorteio : %f : %s", sorteio, objIndividuo.representacao);
+      saida = String.format("2 Sorteio : %f : %s", sorteio, objIndividuo.representacao);
       objDiversos.toFile("evolucao.fil", saida);
       /**/
 
@@ -391,7 +398,7 @@ public class Populacao {
       
       if(cross <= objCentral.taxaCrossover * 100){
         crossover( (objIndividuo.representacao), (objIndividuo.representacao) );   
-        saida = saida.format("  op CROSSOVER : %s / %s", 
+        saida = String.format("  op CROSSOVER : %s / %s", 
         		objIndividuo.representacao, objIndividuo.representacao);
         
         objDiversos.toFile("evolucao.fil", saida);    
@@ -401,13 +408,13 @@ public class Populacao {
       
       if(mut <= objCentral.taxaMutacao * 100){
         mutacao(objIndividuo.representacao);
-        saida = saida.format(" op MUTACAO 1  : %s", objIndividuo.representacao);
+        saida = String.format(" op MUTACAO 1  : %s", objIndividuo.representacao);
         objDiversos.toFile("evolucao.fil", saida);   
         }
       
       if( toPopulacao( contador, objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
         contador ++;
-        saida = saida.format(" ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
+        saida = String.format(" ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
         objDiversos.toFile("evolucao.fil", saida);        
         }
       
@@ -416,14 +423,14 @@ public class Populacao {
         if(mut <= objCentral.taxaMutacao * 100){
           mutacao(objIndividuo.representacao);
           /*prova*/
-          saida = saida.format("    op MUTACAO 2  : %s", objIndividuo.representacao);
+          saida = String.format("    op MUTACAO 2  : %s", objIndividuo.representacao);
           objDiversos.toFile("evolucao.fil", saida);
           /**/
           }
         if( toPopulacao( contador, objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
           contador ++;
           /*prova*/
-          saida = saida.format( " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
+          saida = String.format( " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
           objDiversos.toFile("evolucao.fil", saida);
           /**/
           }
@@ -438,6 +445,7 @@ public class Populacao {
 	 * fitness e na ordem dos individuos, simulando o metodo de selecao da
 	 * roleta. Retorna qual o individuo possui esta na faixa sorteada.
 	 * @throws IOException */
+	@SuppressWarnings("unused")
 	public int indiceIndividuoSorteado(double sorteio) throws IOException{
 		double superior = 0;
 		String saida = null;
@@ -448,7 +456,7 @@ public class Populacao {
 		BufferedReader br = new BufferedReader(fr);
 				
 		if(br == null){
-			 saida = saida.format("nao abriu o arquivo de Variacao de fitness : %s", objCentral.arquivoVariacaoFitness);
+			 saida = String.format("nao abriu o arquivo de Variacao de fitness : %s", objCentral.arquivoVariacaoFitness);
 			objDiversos.erro(saida, 1);
 		}
 		
@@ -469,7 +477,7 @@ public class Populacao {
 
 	/** Metodo usado para aplicar mutacao em um individuo. */
 	public void mutacao(String indiv) {
-		int i = 0, mudou = 0, posMut = rand() % indiv.length();
+		int i = 0, mudou = 0, posMut = (int)(Math.random() * indiv.length());
 		for (; mudou == 0;) {
 			switch (indiv.charAt(posMut)) {
 			case '+':
@@ -483,7 +491,7 @@ public class Populacao {
 			// case '#': posMut = rand() % strlen( indiv ); break; //escolhe
 			// outra posicao
 			case ((char) 216):
-				posMut = rand() % indiv.length();
+				posMut = (int)(Math.random()* indiv.length());
 				break; // escolhe outra posicao
 			default: {
 				int pos = 0;
@@ -517,11 +525,11 @@ public void crossover( String  indiv1, String  indiv2 ){
   tamFormat =  objCentral.formatoIndividuo.length();
   for(i=0; i<tamFormat; i++)
     {
-      ocorre = rand() % 2;
+      ocorre = (int)(Math.random() * 2);
       if(ocorre != 0){    // ocorre crossover no tipo chance de 50%
         inicTipo = objCentral.inicioTipo(i);
         tamTipo =  objCentral.tamanhoTipo(i);
-        posCross = (rand() % tamTipo);
+        posCross = ((int)(Math.random() * tamTipo));
         switch( objCentral.formatoIndividuo.charAt(i))
           {
           case 'S':
@@ -543,7 +551,7 @@ public void crossover( String  indiv1, String  indiv2 ){
               if(maxTam == 0)
                 posCross = 0;
               else
-                posCross = (rand() % maxTam);
+                posCross = ((int)(Math.random() * maxTam));
               break;
             }// case
           case 'C':
@@ -572,7 +580,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 		double fitness = 0, somatoriaFitness = 0, cobertura=0;
 				 
 		if(objCentral.arquivoCoberturaIndividuo == null) {
-      	saida = saida.format("nao abriu o arquivo de cobertura/individuo : %s", objCentral.arquivoCoberturaIndividuo );
+      	saida = String.format("nao abriu o arquivo de cobertura/individuo : %s", objCentral.arquivoCoberturaIndividuo );
       	objDiversos.erro(saida, 1 );
 		}
 
@@ -582,7 +590,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 			sobrepoe(linhaCobertura, desempenho);
 
 			fitness = (double)objDiversos.numberOf(desempenho, 'X') * 100 / (double) (objCentral.quantidadeElemento);
-			saida = saida.format("%5d : %10.2f\n", i, fitness);
+			saida = String.format("%5d : %10.2f\n", i, fitness);
 			objDiversos.escreverArquivo(objCentral.arquivoFitness, saida);
     
 		}// fim for
@@ -604,7 +612,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 		 System.out.printf("EVOLUCAO POR INEDITISMO (%.0f)", objCentral.quantidadeIneditismo);
 		 
 		 for(contador = (int)( objCentral.quantidadeFitness); contador < (int) ( objCentral.quantidadeFitness + objCentral.quantidadeElitismo  ); )  {
-			 posicao = melhorFitAntNaoEm( objCentral.arquivoPopulacaoTemporario.getPath());
+			 posicao = melhorFitAntNaoEm( objCentral.arquivoPopulacaoTemporario);
 			 if (posicao != -1){
 				 objIndividuo.load( (int) posicao );        
 				 System.out.printf(" Ineditismo do indiv pos %0.0f : %s", posicao, objIndividuo.representacao);
@@ -627,14 +635,13 @@ public void crossover( String  indiv1, String  indiv2 ){
 	 * @throws IOException 
 	 * @throws NumberFormatException */
 	public double melhorInedAntNaoEm ( File arquivoAuxiliar ) throws NumberFormatException, IOException{
-		File ptrIneditismo;
 		String saida = null;
 		String linha = null;
 		FileReader fr = new FileReader(objCentral.arquivoIneditismo);
 		BufferedReader br = new BufferedReader(fr);
 		
 		if(br == null){
-			saida = saida.format("nao abriu o arquivo de Ineditismo corretamente : %s", objCentral.arquivoIneditismo);
+			saida = String.format("nao abriu o arquivo de Ineditismo corretamente : %s", objCentral.arquivoIneditismo);
 			objDiversos.erro(saida, 1);
 		}
 		
@@ -666,16 +673,14 @@ public void crossover( String  indiv1, String  indiv2 ){
 	 * @throws IOException */
 	public double melhorFitAntNaoEm( File arquivoAuxiliar ) throws IOException{
 		String saida = null;
-		Individuo  indiv = new Individuo();
 		String linha = null;
 		int pos2p = 0;
 		double posMelhor = -1, pos = 0, fit = 0, fitMelhor = -1;
-		int tamLinha = 100;
-  
+		  
 		FileReader fr = new FileReader(objCentral.arquivoFitness);
 		BufferedReader br = new BufferedReader(fr);
 		if(br == null){
-			saida = saida.format("nao abriu o arquivo de Fitness corretamente : %s", objCentral.arquivoFitness);
+			saida = String.format("nao abriu o arquivo de Fitness corretamente : %s", objCentral.arquivoFitness);
 			objDiversos.erro(saida, 1);
 		}
 		
@@ -692,9 +697,10 @@ public void crossover( String  indiv1, String  indiv2 ){
 					fitMelhor = fit;
 				}
 			} // fim if
-      linha  = br.readLine();
-      }// fim for   
-	return posMelhor;
+			linha  = br.readLine();
+		}// fim for   
+		br.close();
+		return posMelhor;
 	}
 
 	/** Metodo usado para calcular o ineditismo da populacao. 
@@ -702,7 +708,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 	public void  geraBonusIneditismo() throws IOException{
 		
 		objDiversos.toFile("log_erro.log", "------geraIneditismo");
-		String saida = null, linhaBrPtrBonusIneditismo = null, linhaBrPtrCobertura = null;
+		String saida = null,  linhaBrPtrCobertura = null;
 		String elemCobertura = null;
 		int contador=0, cont=0, lixo=0, ponto2=0, quantCob=0;
 		double tamElCob = 0, bonificacao = 0;
@@ -713,7 +719,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 		BufferedReader brPtrCobertura = new BufferedReader(frPtrCobertura);
  
 		if ( brPtrCobertura == null ){
-			saida = saida.format("nao abriu o arquivo de cobertura de Elementos corretamente : %s", objCentral.arquivoCoberturaElemento);
+			saida = String.format("nao abriu o arquivo de cobertura de Elementos corretamente : %s", objCentral.arquivoCoberturaElemento);
 			objDiversos.erro(saida,1);
 		}
 		System.out.printf("\n< geraIneditismo> Calculando ineditismo para os elementos\n");
@@ -725,7 +731,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 			elemCobertura = elemCobertura.trim();
     
 			if( elemCobertura.length() != objCentral.tamanhoPopulacao ){
-			saida = saida.format("Erro no calculo da bonificacao p/Elemento %d\nTamanho da linha de cobertura do Elemento = %d, deveria ser %0.0f \n linha de cobertura : '%s'", contador, elemCobertura.length(), objCentral.tamanhoPopulacao, elemCobertura);
+			saida = String.format("Erro no calculo da bonificacao p/Elemento %d\nTamanho da linha de cobertura do Elemento = %d, deveria ser %0.0f \n linha de cobertura : '%s'", contador, elemCobertura.length(), objCentral.tamanhoPopulacao, elemCobertura);
 			objDiversos.erro(saida , 1);
 			}
 
@@ -734,7 +740,7 @@ public void crossover( String  indiv1, String  indiv2 ){
 			
 			if(quantCob!=0)
 				bonificacao = 100 * ( 1 - ( quantCob / objCentral.tamanhoPopulacao ) );		
-				saida = saida.format("%5d : %10.2f\n", contador, bonificacao);
+				saida = String.format("%5d : %10.2f\n", contador, bonificacao);
 				objDiversos.escreverArquivo(objCentral.arquivoBonusIneditismo, saida);
    
 		linhaBrPtrCobertura = brPtrCobertura.readLine();
@@ -748,287 +754,252 @@ public void crossover( String  indiv1, String  indiv2 ){
 	/**
 	 * Metodo usado para calcular a cobertura dos elementos, com base na
 	 * cobertura dos individuos.
+	 * @throws IOException 
 	 */
-	public void CoberturaElementos(){
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "***------geraCoberturaElementos");
-  String linhaCobInd = null, * linhaCobElem = null;
-  int contador=0, cont=0, lixo=0, ponto2=0;
-  File ptrCobInd, * ptrCobElem;
-  alocaCharPtr( &linhaCobInd , (int)(objCentral.quantidadeElemento + 20 ), " geraCoberturaElemento", "linhaCobInd" );
-  alocaCharPtr( &linhaCobElem , (int)(objCentral.tamanhoPopulacao + 20 ), " geraCoberturaElemento", "linhaCobElem" );
+	public void geraCoberturaElementos() throws IOException{
+		
+		if(objCentral.geraLog != 0){ 
+			objDiversos.toFile("log_erro.log", "***------geraCoberturaElementos");
+		}
+		
+		String saida = null;
+		String linhaCobInd = null,  linhaCobElem = null;
+		int contador=0, cont=0, lixo=0, ponto2=0;
+				
+		FileReader frPtrCobElem = new FileReader(objCentral.arquivoCoberturaElemento);
+		BufferedReader brPtrCobertura = new BufferedReader(frPtrCobElem);
+		
+		FileReader frPtrCobInd = new FileReader( objCentral.arquivoCoberturaElemento);
+		BufferedReader brPtrCobInd = new BufferedReader(frPtrCobInd);
+		
+		if (brPtrCobInd == null){
+			saida = String.format("nao abriu o arquivo de cobertura corretamente : %s", objCentral.arquivoCoberturaIndividuo);
+			objDiversos.erro(saida ,1);
+		}
 
-  ptrCobElem = fopen(objCentral.arquivoCoberturaElemento  ,"w");
-  ptrCobInd  = fopen(objCentral.arquivoCoberturaIndividuo ,"r");
-  if (ptrCobInd == null){
-    sprintf(ErrorText, "nao abriu o arquivo de cobertura corretamente : %s", objCentral.arquivoCoberturaIndividuo);
-    objDiversos.erro(ErrorText,1);
-  }
-
-  for (contador = 0; contador < objCentral.quantidadeElemento; contador++){
-    rewind( ptrCobInd );
-    memset(linhaCobElem , '\0', (int) (objCentral.tamanhoPopulacao + 20 ));
-
-    for (cont = 0; cont < (int) (objCentral.tamanhoPopulacao); cont++){
-      memset( linhaCobInd, '\0', (int) (objCentral.quantidadeElemento + 20 ) );
-      fgets ( linhaCobInd, (int) (objCentral.quantidadeElemento + 20 ), ptrCobInd );
-      ponto2 = objDiversos.indexOf(linhaCobInd,':');
-      strcpy(linhaCobInd, linhaCobInd + ponto2 + 1);
-      objDiversos.trim(&linhaCobInd);
-
-      if( strlen(linhaCobInd) == objCentral.quantidadeElemento ){
-        objDiversos.trim(& linhaCobInd);
-        linhaCobElem[cont] = linhaCobInd[contador];
-      }
-    }// fim for
-    /** /
-    if (ctl->pausaGeracao)
-    {
-    System.out.printf("\n Vai gravar no arquivo ce cobertura do elemento:");
-    pprova(linhaCobElem);
-    }
-/**/
-    if( strlen(linhaCobElem) != objCentral.tamanhoPopulacao ){
-      sprintf(ErrorText, " geraCoberturaElementos - Cobertura do elemento gerada errada para o elm %d - ", contador);
-      objDiversos.erro(ErrorText, 1);
-      }
-    fprintf( ptrCobElem,"%5d : %s\n", contador, linhaCobElem );
-    fflush( ptrCobElem );
-  }// fim for
-
-  fclose( ptrCobElem );
-  fclose( ptrCobInd  );
-  desalocaCharPtr( &linhaCobInd , (int)(objCentral.quantidadeElemento + 20 ), " geraCoberturaElemento", "linhaCobInd" );
-  desalocaCharPtr( &linhaCobElem , (int)(objCentral.tamanhoPopulacao + 20 ), " geraCoberturaElemento", "linhaCobElem" );
-
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "***------saindo geraCoberturaElementos");
+		linhaCobInd = brPtrCobertura.readLine();
+		for (contador = 0; contador < objCentral.quantidadeElemento; contador++){
+			
+			linhaCobElem = brPtrCobInd.readLine();
+			for (cont = 0; cont < (int) (objCentral.tamanhoPopulacao); cont++){
+				ponto2 = objDiversos.indexOf(linhaCobInd,':');
+				linhaCobInd = linhaCobInd + ponto2 + 1;
+				
+				if( linhaCobInd.length() == objCentral.quantidadeElemento ){
+					linhaCobInd = linhaCobInd.trim();
+					linhaCobElem = linhaCobElem.replace(linhaCobElem.charAt(cont), linhaCobInd.charAt(contador));
+				}
+				linhaCobInd = brPtrCobertura.readLine();
+			}// fim for
+    
+			if(linhaCobElem.length() != objCentral.tamanhoPopulacao ){
+				saida = String.format(" geraCoberturaElementos - Cobertura do elemento gerada errada para o elm %d - ", contador);
+				objDiversos.erro(saida, 1);
+			}
+			saida = String.format("%5d : %s\n", contador, linhaCobElem );
+			objDiversos.escreverArquivo(objCentral.arquivoCoberturaElemento, saida);
+		
+			linhaCobInd = brPtrCobertura.readLine();
+		}// fim for
+		
+		brPtrCobInd.close();
+		brPtrCobertura.close();
+		
+		if(objCentral.geraLog != 0){
+			objDiversos.toFile("log_erro.log", "***------saindo geraCoberturaElementos");
+		}
   
 }
 
 	/**
 	 * Metodo usado para evoluir populacao com base no indice de ineditismo do
 	 * individuo.
+	 * @throws IOException 
 	 */
-	int evolucaoPorIneditismo(){
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------evolucaoIneditismo");
-
-  int contador = 0;
-  double posicao = 0;
-  individuo * indiv1 = new individuo( & (*ctl) );
-  /*prova*/
-  //objDiversos.toFile("evolucao.fil", "==============================================================");
-  sprintf(ErrorText, "EVOLUCAO POR INEDITISMO (%0.0f)", objCentral.quantidadeIneditismo);
-  //objDiversos.toFile("evolucao.fil", ErrorText);
-  /**/
-  for(contador = (int)( objCentral.quantidadeFitness + objCentral.quantidadeElitismo ); contador < (int) ( objCentral.quantidadeFitness + objCentral.quantidadeElitismo + objCentral.quantidadeIneditismo ); ){
-    posicao = melhorInedAntNaoEm( objCentral.arquivoPopulacaoTemporario );
-    if (posicao != -1){
-      objIndividuo.load( (int) posicao );
-      /*prova*/
-      sprintf(ErrorText, " Ineditismo do indiv pos %0.0f : %s", posicao, objIndividuo.representacao);
-      //objDiversos.toFile("evolucao.fil", ErrorText);
-      /**/
-    }
-    else{
-      objIndividuo.novo();
-      /*prova*/
-      sprintf(ErrorText, " Ineditismo do novo indiv : %s", objIndividuo.representacao);
-      //objDiversos.toFile("evolucao.fil", ErrorText);
-      /**/
-    }
-    if ( toPopulacao( contador , objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
-      contador ++;
-      /*prova*/
-      sprintf(ErrorText, " ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
-      //objDiversos.toFile("evolucao.fil", ErrorText);
-      /**/
-    }
-  } // fim for ineditismo
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "------saindo evolucaoIneditismo");
-  delete(indiv1);
-  return true;
-}
+	public void evolucaoPorIneditismo() throws IOException{
+		
+		if(objCentral.geraLog != 0){
+			objDiversos.toFile("log_erro.log", "------evolucaoIneditismo");
+		}
+		int contador = 0;
+		double posicao = 0;
+				
+		System.out.printf("EVOLUCAO POR INEDITISMO (%.0f)", objCentral.quantidadeIneditismo);
+  
+		for(contador = (int)( objCentral.quantidadeFitness + objCentral.quantidadeElitismo ); contador < (int) ( objCentral.quantidadeFitness + objCentral.quantidadeElitismo + objCentral.quantidadeIneditismo ); ){
+			posicao = melhorInedAntNaoEm( objCentral.arquivoPopulacaoTemporario );			
+			if (posicao != -1){
+				objIndividuo.load( (int) posicao );
+      			System.out.printf("Ineditismo do indiv pos %0.0f : %s", posicao, objIndividuo.representacao);
+			}			
+			else{
+				objIndividuo.novo();
+				System.out.printf(" Ineditismo do novo indiv : %s", objIndividuo.representacao);
+     		}
+			
+			if ( toPopulacao( contador , objIndividuo.representacao, objCentral.arquivoPopulacaoTemporario ) ){
+				contador ++;
+				System.out.printf(" ** %d INDIVIDUO   : %s", contador, objIndividuo.representacao);
+			}
+		} // fim for ineditismo
+		
+		if(objCentral.geraLog != 0){
+			objDiversos.toFile("log_erro.log", "------saindo evolucaoIneditismo");
+		}
+	}
 
 	/**
 	 * Metodo usado para gerar um arquivo que reflita os dados de uma populacao
 	 * de forma entendivel/decodificada.
+	 * @throws IOException 
 	 */
-	public int decodificaPopulacao(File  origem, String  destino){
-   //if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "---decodificaPopulacao");
-   File ptrPopulacao,  ptrPopRes;
-   String    block = "",  block_aux = "",  gene = "";
- 
+	public void  decodificaPopulacao(File  origem, String  destino) throws IOException{
+   
+		
+		String    block = "",  block_aux = "",  gene = "", saida = null;
+		String linhaPtrPopulacao = null;
+		int  tamFormato = objCentral.formatoIndividuo.length();
+		int  inicBlock,  pos;
+		
+		int geneTam = 0, tamBloco = 30;
+		geneTam = (int) ( objCentral.tamanhoIndividuo + 20 );
 
-  int    tamFormato = objCentral.formatoIndividuo.length(),
-		  inicBlock,
-		  pos;
-  int    geneTam = 0, tamBloco = 30;
-
-  geneTam = (int) ( objCentral.tamanhoIndividuo + 20 );
-
-  if(objCentral.tamanhoMaximoString > tamBloco)
-    tamBloco = (int) objCentral.tamanhoMaximoString;
-
-  ptrPopulacao = fopen(origem, "r");
-  if (ptrPopulacao == null){
-      sprintf(ErrorText,"nao abriu o arquivo de populacao corretamente : %s", origem);
-      objDiversos.erro(ErrorText,1);
-    }
-  ptrPopRes = fopen(destino, "w");
-  alocaCharPtr( &block , tamBloco, "decodificaPopulacao", "block");
-  alocaCharPtr( &block_aux , tamBloco, "decodificaPopulacao", "block_aux");
-  alocaCharPtr( &gene , geneTam, "decodificaPopulacao", "gene");
-
-  for (int contador = 1; !feof(ptrPopulacao); contador++){
-      memset(gene, '\0', geneTam);
-      fgets(gene, geneTam, ptrPopulacao);
-      objDiversos.trim(gene);
-      if( strcmp(gene,"") != 0 ){
-         strcpy(gene, gene + objDiversos.indexOf(gene, ':')+1);
-         objDiversos.trim(gene);
-         for (int i = 0; i < tamFormato ; i++){
-            inicBlock = objCentral.inicioTipo(i);
-            memset( block,     '\0', tamBloco );
-            memset( block_aux, '\0', tamBloco );
-            memcpy( block, gene+inicBlock, objCentral.tamanhoTipo(i) );
-            switch( objCentral.formatoIndividuo[i] ){
-               case 'I': sprintf(block_aux,"%d", objIndividuo.representacaodecode_block_int(block) ); break;
-               case 'D': sprintf(block_aux,"%f", objIndividuo.representacaodecode_block_double(block) ); break;
-               case 'F': sprintf(block_aux,"%f", objIndividuo.representacaodecode_block_float(block) ); break;
-               case 'S':
-               {
-                  //pos = objDiversos.indexOf(block,'#');
-                  pos = objDiversos.indexOf(block, (char) 216);
-                  if(pos == 0) printf ("Valor do argumento string eh vazio... avaliar impacto");
-                  if(pos != -1) block[pos] = '\0';
-                  strcpy(block_aux, block );
-                  break;
-               }
-               case 'C':
-               {
-                  memset(block_aux, '\0', tamBloco);
-                  strcpy(block_aux, block);
-                  break;
-               }
-            }// fim switch
-            fprintf(ptrPopRes, "%s", block_aux);
-            if( i != tamFormato - 1 )
-               fprintf(ptrPopRes, ", ");
-            }//fim for
-         fprintf(ptrPopRes, "\n");
-         fflush (ptrPopRes);
-      } // fim if gene == ""
-  } // fim for
-  fclose(ptrPopRes);
-  fclose(ptrPopulacao);
+		if(objCentral.tamanhoMaximoString > tamBloco){
+			tamBloco = (int) objCentral.tamanhoMaximoString;
+		}
+		
+		FileReader frPtrPopulacao = new FileReader(origem);
+		BufferedReader brPtrPopulacao = new BufferedReader(frPtrPopulacao);
+		  
+		if (brPtrPopulacao == null){
+			saida =  String.format("nao abriu o arquivo de populacao corretamente : %s", origem);
+			objDiversos.erro(saida,1);
+		}		
+   		  		
+  		linhaPtrPopulacao = brPtrPopulacao.readLine();
+  		for (int contador = 1; brPtrPopulacao!= null; contador++){
+  			gene = linhaPtrPopulacao.trim();
+  			if( gene != ""){
+  				gene = (gene + objDiversos.indexOf(gene, ':') + 1).trim(); //errado
+  				for (int i = 0; i < tamFormato ; i++){
+  					inicBlock = objCentral.inicioTipo(i);
+  					block = gene + inicBlock;
+  					switch( objCentral.formatoIndividuo.charAt(i)){
+  						case 'I': block_aux = String.format("%d", objIndividuo.decode_block_int(block) ); break;
+  						case 'D': block_aux = String.format("%f", objIndividuo.decode_block_double(block) ); break;
+  						case 'F': block_aux = String.format("%f", objIndividuo.decode_block_float(block) ); break;
+  						case 'S':{
+  							pos = objDiversos.indexOf(block, (char) 216);
+  							if(pos == 0) System.out.println("Valor do argumento string eh vazio... avaliar impacto");
+  							if(pos != -1) block = block.replace(block.charAt(pos), '\0');
+  							block_aux = block ;
+  							break;
+  						}
+  						case 'C': {  							
+  							block_aux = block ;
+  							break;
+  						}
+  					}// fim switch
+  					objDiversos.escreverArquivo(destino,  block_aux);		
+  					if( i != tamFormato - 1 ){
+  						objDiversos.escreverArquivo(destino,  ", ");
+  					}
+  				}//fim for  		
+  			} // fim if gene == ""
+  			linhaPtrPopulacao = brPtrPopulacao.readLine();
+  		} // fim for
   
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "---decodificaPopulacao");
-  return true;
-}
+  		brPtrPopulacao.close();
+  		if(objCentral.geraLog != 0){
+  			objDiversos.toFile("log_erro.log", "---decodificaPopulacao");  
+  		}
+	}
 
 
 	/**
 	 * Este metodo retorna o valor do bonus para os individuos que cobriram o
 	 * elemento informado por pos.
+	 * @throws IOException 
 	 */
-	double getBonusElemento(int pos){
+	public double  getBonusElemento(int pos) throws IOException{
 
-   int i = 0;
-   String gene = null, * bonificacaoStr = null;
-   File ptrBonusIneditismo = null;
-   double bonificacao = 0;
+		int i = 0;
+		String gene = null,  bonificacaoStr = null, saida = null, linha = null;
+		File ptrBonusIneditismo = null;
+		double bonificacao = 0;
+		
+		FileReader fr = new FileReader(objCentral.arquivoBonusIneditismo);
+		BufferedReader br = new BufferedReader(fr);
+		
+		if(ptrBonusIneditismo == null){
+			saida = String.format("getBonusElemento - Nao abriu corretamente o arquivo  : %s"
+					, objCentral.arquivoCoberturaIndividuo );
+			objDiversos.erro( saida, 1 );
+		}
+		
+		if(pos >= objCentral.quantidadeElemento){
+			saida = String.format("Pos, %d, extrapolou o indice do elemento buscado %f", pos, objCentral.quantidadeElemento);
+			objDiversos.erro(saida ,1);
+		}
+ 		
+		linha = br.readLine();
+		for (i = 0; i <= pos; i++){
+			gene = linha;     
+			linha = br.readLine();
+		}// fim for
+		br.close();
+  
+      i = objDiversos.indexOf(gene.trim(), ':') + 1;
+      bonificacaoStr = gene + i ;      
+      bonificacao = Double.parseDouble(bonificacaoStr.trim()); 
+ 
+      return bonificacao;
+	}
 
-   ptrBonusIneditismo = fopen( objCentral.arquivoBonusIneditismo, "r");
-   if(ptrBonusIneditismo == null){
-      sprintf( ErrorText," getBonusElemento - Nao abriu corretamente o arquivo  : %s", objCentral.arquivoCoberturaIndividuo );
-      objDiversos.erro( ErrorText, 1 );
-    }
-    if(pos >= objCentral.quantidadeElemento){
-      sprintf(ErrorText,"Pos, %d, extrapolou o indice do elemento buscado %f", pos, objCentral.quantidadeElemento);
-      objDiversos.erro(ErrorText ,1);
-    }
-    int tamLinha = 100;
+	/** Gera o arquivo com a bonificacao final por ineditismo. 
+	 * @throws IOException */
+	public void geraIneditismoPopulacao() throws IOException{
 
-    alocaCharPtr( &gene, tamLinha, "getBonusElemento", "gene");
-    alocaCharPtr( &bonificacaoStr, tamLinha, "getBonusElemento", "bonificacaoStr");
+		if(objCentral.geraLog != 0){
+			objDiversos.toFile("log_erro.log", "---------geraIneditismoPopulacao");
+		}
+		
+		String linhaCobInd = null, saida = null;
+		int cont=0, ponto2=0;
+		double ineditismo = 0;		
+		
+		FileReader fr = new FileReader(objCentral.arquivoCoberturaIndividuo);
+		BufferedReader brPtrCobInd = new BufferedReader(fr);
+		
+		if (brPtrCobInd == null){
+			saida = String.format("nao abriu o arquivo de cobertura corretamente : %s", objCentral.arquivoCoberturaIndividuo);
+			objDiversos.erro(saida,1);
+		}
+		
+		linhaCobInd = brPtrCobInd.readLine();
+		for (cont = 0; cont < (int) (objCentral.tamanhoPopulacao); cont++){
+			ponto2 = objDiversos.indexOf(linhaCobInd,':');
+			linhaCobInd = linhaCobInd + ponto2 + 1;
+			ineditismo = 0;
+			if( linhaCobInd.length() != objCentral.quantidadeElemento ){
+				saida = String.format(" geraIneditismoPopulacao - Cobertura do individuo gerada errada para o individuo %d - ", cont);
+				objDiversos.erro(saida, 1);
+			}
 
-   for (i = 0; i <= pos; i++){
-      memset(gene, '\0', tamLinha);
-      try{
-         fgets(gene, tamLinha, ptrBonusIneditismo);
-      }
-      catch(...){
-         objDiversos.erro("Estouro de memoria ao tentar recuperar bonus do arquivo de populacao para var gene, metodo load",1);
-      }
+			for (int i = 0; i < objCentral.quantidadeElemento; i++){
+				if ( linhaCobInd.charAt(i)== 'X')
+				ineditismo += getBonusElemento( i );
+			}// fim for
+			
+			saida = String.format( "%5d : %f\n", cont, ineditismo);
+			objDiversos.escreverArquivo(saida, objCentral.arquivoIneditismo.getPath());   
+			linhaCobInd = brPtrCobInd.readLine();	
+     }// fim for 
+		brPtrCobInd.close();
 
-   }// fim for
-
-   trim ( & gene);
-   try{
-      i = objDiversos.indexOf(gene, ':') + 1;
-      strcpy(bonificacaoStr, gene + i );
-      trim ( & bonificacaoStr);
-      bonificacao = atof( bonificacaoStr);
-   }
-   catch(...){
-      objDiversos.erro("Estouro de memoria ao tentar recuperar individuo da linha do arquivo de populacao , metodo load",1);
-   }
-
-   desalocaCharPtr( &gene, tamLinha, "getBonusElemento", "gene");
-   desalocaCharPtr( &bonificacaoStr, tamLinha, "getBonusElemento", "bonificacaoStr");
-
-   fclose(ptrBonusIneditismo);
-   return bonificacao;
-
-}
-
-	/** Gera o arquivo com a bonificacao final por ineditismo. */
-	public void geraIneditismoPopulacao(){
-//  Luciano Petinati Ferreira
-//  data : 17/07/2002
-//  hora : 22:00
-//  Testado 1 vez
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "---------geraIneditismoPopulacao");
-  String linhaCobInd = null;
-  int cont=0, ponto2=0;
-  double ineditismo = 0;
-  File ptrCobInd,  ptrIneditismo;
-
-  alocaCharPtr( &linhaCobInd , (int)(objCentral.quantidadeElemento + 20 ), " geraIneditismoPopulacao", "linhaCobInd" );
-
-  ptrIneditismo = fopen(objCentral.arquivoIneditismo  ,"w");
-  ptrCobInd  = fopen(objCentral.arquivoCoberturaIndividuo ,"r");
-
-  if (ptrCobInd == null){
-    sprintf(ErrorText, "nao abriu o arquivo de cobertura corretamente : %s", objCentral.arquivoCoberturaIndividuo);
-    objDiversos.erro(ErrorText,1);
+  if(objCentral.geraLog != 0){
+	  objDiversos.toFile("log_erro.log", "---------saindo geraIneditismoPopulacao");
   }
-  for (cont = 0; cont < (int) (objCentral.tamanhoPopulacao); cont++){
-     memset( linhaCobInd, '\0', (int) (objCentral.quantidadeElemento + 20 ) );
-     fgets ( linhaCobInd, (int) (objCentral.quantidadeElemento + 20 ), ptrCobInd );
-     ponto2 = objDiversos.indexOf(linhaCobInd,':');
-     strcpy(linhaCobInd, linhaCobInd + ponto2 + 1);
-     objDiversos.trim(&linhaCobInd);
-     ineditismo = 0;
-
-     if( strlen(linhaCobInd) != objCentral.quantidadeElemento ){
-        sprintf(ErrorText, " geraIneditismoPopulacao - Cobertura do individuo gerada errada para o individuo %d - ", cont);
-        objDiversos.erro(ErrorText, 1);
-        }
-
-     for (int i = 0; i < objCentral.quantidadeElemento; i++){
-        if ( *( linhaCobInd +i) == 'X')
-            ineditismo += getBonusElemento( i );
-     }// fim for
-
-     fprintf( ptrIneditismo, "%5d : %f\n", cont, ineditismo );
-     fflush( ptrIneditismo );
-
-     }// fim for
-  fclose( ptrIneditismo );
-  fclose( ptrCobInd  );
-
-  desalocaCharPtr( &linhaCobInd , (int)(objCentral.quantidadeElemento + 20 ), " geraIneditismoPopulacao", "linhaCobInd" );
-  if(objCentral.geraLog != 0) objDiversos.toFile("log_erro.log", "---------saindo geraIneditismoPopulacao");
 
 }
 }
