@@ -1,12 +1,14 @@
 package algoritmoGenetico;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.server.ObjID;
 import java.util.Formattable;
 
 import main.Mersenne;
 import main.Diversos;
-import ferramenta.Central;
 import ferramenta.*;
 
 public class Individuo{
@@ -85,20 +87,20 @@ public class Individuo{
 	 * configuracao fornecida ao framework.
 	 */
 
-	public int novo(String linha) {
+	public void novo(String linha) {
 		int numArgumentos = objCentral.formatoIndividuo.length();
 		int virg = -1;
 		String blocoLinha = null, bloco = null;
 		
 		for (int cont = 0; cont < numArgumentos; cont++) {
+			if ((virg = objDiversos.indexOf(linha, ',')) != -1){		
+				blocoLinha = linha;
+			}
+				else{
+					blocoLinha = linha;
+				}			
+			linha = linha.trim() + virg + 1;
 			
-			if ((virg = objDiversos.indexOf(linha, ',')) != -1)
-				strncpy(blocoLinha, linha, virg);
-			else
-				strcpy(blocoLinha, linha);
-			objDiversos.trim(blocoLinha);
-			strcpy(linha, linha + virg + 1);
-
 			switch (objCentral.formatoIndividuo.charAt(cont)) {
 			case 'I': {
 				forma_block_int(bloco, objCentral.tamanhoTipo(cont) + 1,
@@ -126,7 +128,7 @@ public class Individuo{
 				break;
 			}
 			case 'C': {
-				strncpy(bloco, blocoLinha, 1);
+				bloco = blocoLinha;
 				break;
 			}
 			}// fim switch
@@ -136,42 +138,47 @@ public class Individuo{
 	}
 
 	/**
-	 * * M�todo para recuperar o pos-esimo indiv�duo da popula��o. pos deve
-	 * variar de 0 at� tamanho da popula��o - 1.
+	 * * Metodo para recuperar o pos-esimo individuo da populacao. pos deve
+	 * variar de 0 ate tamanho da populacao - 1.
+	 * @throws IOException 
 	 */
-	public int load(int pos) {
+	public void load(int pos) throws IOException {
 		int i = 0;
 		String gene = null, geneAux = null;
-		File ptrPopulation = null;
-
-		// ptrPopulation = fopen(objCentral.arquivoPopulacao, "r");
-		if (ptrPopulation == null) {
-			System.out.printf("aqui nao abriu o arquivo de populacao : %s");
+		String saida = null, linha = null;
+		
+		FileReader fr = new FileReader(objCentral.arquivoPopulacao);
+		BufferedReader br = new BufferedReader(fr);
+		
+		if (br == null) {
+			 saida = String.format("aqui nao abriu o arquivo de populacao : %s", objCentral.arquivoPopulacao);
+		     objDiversos.erro(saida,1);
 		}
+		
 		if (pos >= objCentral.tamanhoPopulacao) {
-			System.out.printf("Pos, %d, extrapolou tamanho da populacao %f");
+			 saida = String.format("Pos, %d, extrapolou tamanho da populacao %f", pos, objCentral.tamanhoPopulacao);
+			 objDiversos.erro(saida,1);
 		}
 
+		linha = br.readLine();
 		for (i = 0; i <= pos; i++) {
 			// cout << "\n ind nro " << i;
-			if (pos == 14)
+			if (pos == 14){
 				pos += 0;
-
-			fgets(gene, (int) (objCentral.tamanhoIndividuo + 10), ptrPopulation);
-
-		}// fim for
-
-		objDiversos.trim(gene);
-
-		i = objDiversos.indexOf(gene, ':') + 1;
+			}	
+			gene = linha;
+			linha = br.readLine();	
+		}// fim for	
+		br.close();
+		
+		i = objDiversos.indexOf(gene.trim(), ':') + 1;
 		geneAux = gene + i;
-		objDiversos.trim(geneAux);
-		setRepresentacao(geneAux);
+		setRepresentacao(geneAux.trim());		
 	}
 
 	// _________________________________________________________________
 
-	/** M�todo que atribui valor para a representa��o de um indiv�duo. */
+	/** Metodo que atribui valor para a representacao de um individuo. */
 	public void setRepresentacao(String valor) {
 		int tam = valor.length();
 		if (tam < 0)
@@ -187,7 +194,7 @@ public class Individuo{
 
 	// _________________________________________________________________
 
-	/** M�todo que recupera o respectivo valor do bloco passado como argumento. */
+	/** Metodo que recupera o respectivo valor do bloco passado como argumento. */
 	public int decode_block_int(String bloco) {
 
 		return Integer.parseInt(bloco);
@@ -196,359 +203,311 @@ public class Individuo{
 	// _________________________________________________________________
 
 	/**
-	 * M�todo usado para formatar um bloco a partir de um valor passado por
+	 * Metodo usado para formatar um bloco a partir de um valor passado por
 	 * argumento.
 	 */
 	public void forma_block_int(String res, int limite, String lido) {
 		int tam = 0;
-		String aux, numero;
-		objDiversos.trim(lido);
+		String aux=null, numero=null;
 		if ((lido.charAt(0) == '-') || (lido.charAt(0) == '+')) {
-		String resposta = aux.replace(aux.charAt(0), lido.charAt(0));
-		aux = resposta;
-			lido++;
+			aux = aux.replace(aux.charAt(0), lido.charAt(0));
+			//lido++;
 		}
-
-		objDiversos.trim(lido);
-		numero = lido;
+		
+		numero = lido.trim();
 		tam = numero.length();
 
-		// strcpy(aux + (6-tam), numero); em c++
-
-		if (limite > (int) aux.length())
+		if (limite > (int) aux.length()){
 			res = aux;
-		else
-			objDiversos.erro(
+		}
+			else{
+				objDiversos.erro(
 					"Estouro de tamanho gerando inteiro randomicamente", 1);
+			}
 
 	}
 
 	// _________________________________________________________________
 
-	/** M�todo usado para formatar um bloco aleatoriamente. */
-	public int  forma_block_int_random(String res, int limite)
-{
-int tam = 0;
-String aux = null,  numero = null;
+	/** Metodo usado para formatar um bloco aleatoriamente. */
+	public int  forma_block_int_random(String res, int limite){
+		int tam = 0;
+		String aux = null,  numero = null;
+		 aux = "+00000";
+		 int num = 0;
+		 if (objCentral.tamanhoMinimoInteiro < 0){
+			 int sinal = objMersenne.genrand()*2;                    //[0+,1-]
+			 	if(sinal == 1){
+			 		num = ( objMersenne.genrand() % ( ( -1 * (objCentral.tamanhoMinimoInteiro ) +1 ) ));
+			 		aux = aux.replace(aux.charAt(0), '-');
+			 	}
+			 		else //+
+			 			num = (  objMersenne.genrand() % ( (objCentral.tamanhoMaximoInteiro + 1 ) ));
+		 }
+		 	else{
+		 		num = (  objMersenne.genrand() % (int)(objCentral.variacaoInteiro) ) + objCentral.tamanhoMinimoInteiro;
+		 	}
+		 numero = String.format("%d", num);
 
-
- aux = "+00000";
-int num = 0;
-if (objCentral.tamanhoMinimoInteiro < 0)
-{
-int sinal = objMersenne.genrand()%2;                    //[0+,1-]
-if(sinal == 1) // -
-{
-num = ( objMersenne.genrand() % ( ( -1 * (objCentral.tamanhoMinimoInteiro ) +1 ) );
-aux[0] = '-';
-}
-else //+
-num = (  objMersenne.genrand() % ( (objCentral.tamanhoMaximoInteiro + 1 ) );
-}
-else
-num = (  objMersenne.genrand() % (int)(objCentral.variacaoInteiro) ) + objCentral.tamanhoMinimoInteiro;
-//printf("dados - %d %d %d %d\n",num,objCentral.tamanhoMinimoInteiro,objCentral.tamanhoMaximoInteiro,objCentral.variacaoInteiro);
-sprintf(numero, "%d", num);
-objDiversos.trim (numero);
-tam = strlen(numero);
-strcpy(aux + (6-tam), numero);
-memset( * res, '\0', limite);
-if (limite >= (int) strlen(aux))
-strcpy( * res, aux);
-else erro("Estouro de tamanho gerando inteiro randomicamente",1);
+		//strcpy(aux + (6-tam), numero);
+		 aux = numero.trim();
+		
+		 if (limite >= (int) aux.length())
+			 res = aux;
+		 	else 
+		 		objDiversos.erro("Estouro de tamanho gerando inteiro randomicamente",1);
 
 return 1;
 }// fim forma_block_int_random
 
 	// _________________________________________________________________
 
-	/** M�todo que recupera o respectivo valor do bloco passado como argumento. */
+	/** Metodo que recupera o respectivo valor do bloco passado como argumento. */
 	public double  decode_block_double (String bloco){
-double res = 0;
-int pos_E  = -1, mant = 1;
-String mantissa = null, * numero = null;
-
-objDiversos.trim ( bloco);
-pos_E = objDiversos.indexOf(bloco, 'E');
-strcpy( numero, bloco );
-if(pos_E != -1)
-{
-strncpy(numero, bloco, pos_E);
-strcpy(mantissa, bloco + pos_E + 1);
-mant = atoi(mantissa);
-
-}// fim pos_E
-
-res = atoi(numero);
-res *= pow(10, mant );
-
-alocaCharPtr( & numero  , 20, "decode_block_double", "numero");
-alocaCharPtr( & mantissa, 10, "decode_block_double", "mantissa");
-return res;
-}
+		double res = 0;
+		int pos_E  = -1, mant = 1;
+		String mantissa = null,  numero = null;
+		
+		pos_E = objDiversos.indexOf(bloco.trim(), 'E');
+		numero = bloco;
+		if(pos_E != -1){
+			numero = bloco;
+			mantissa = bloco + pos_E + 1;
+			mant = Integer.parseInt(mantissa);
+		}// fim pos_E
+		
+		res = Double.parseDouble(numero);
+		res *= Math.pow(10, mant );
+		
+		return res;
+	}
 
 	// _________________________________________________________________
 
 	/**
-	 * M�todo usado para formatar um bloco a partir de um valor passado por
+	 * Metodo usado para formatar um bloco a partir de um valor passado por
 	 * argumento.
 	 */
-	int  forma_block_double (String res, int limite, String lido){
-int tam = 0;
-int pos_E = -1;
-char aux[20], mantissa[10], aux_mant[10], numero[10];
-memset(aux     , '\0', 20);
-memset(mantissa, '\0', 10);
-memset(aux_mant, '\0', 10);
-memset(numero  , '\0', 10);
-strcpy( aux, "+00000");
-strcpy( aux_mant, "+000");
-strcpy( mantissa, "000");
-
-objDiversos.trim ( & lido);
-if ( (lido[0] == '-') || (lido[0] == '+') )
-{
-aux[0] = lido[0];
-lido++;
-}
-objDiversos.trim ( & lido);
-pos_E = objDiversos.indexOf(lido, 'E');
-if( pos_E != -1)
-{                                            //existe mantissa
-strncpy(numero  , lido,  pos_E);
-lido += pos_E;
-if ( (lido[0] == '-') || (lido[0] == '+') )
-{
-aux_mant[0] = lido[0];
-lido++;
-}
-objDiversos.trim ( & lido);
-strcpy (mantissa, lido);
-}// fim if tem E
-else strcpy (numero, lido);
-tam = strlen(numero);
-strcpy(aux      + (6-tam), numero);
-tam = strlen(mantissa);
-strcpy(aux_mant + (4-tam), mantissa);
-
-strcat(aux, aux_mant);
-memset( * res, '\0', limite);
-if (limite > (int) strlen(aux))
-strcpy( * res, aux);
-else
-erro("Estouro de tamanho recuperando double",1);
-return true;
+	public void  forma_block_double (String res, int limite, String lido){
+		int tam = 0;
+		int pos_E = -1;
+		String aux=  null,
+				mantissa = null, 
+				aux_mant = null, 
+				numero = null;
+		 
+		aux = "+00000";
+		aux_mant = "+000";
+		mantissa = "000";
+			
+		if ( (lido.charAt(0) == '-') || (lido.charAt(0) == '+') )	{
+			aux = aux.replace(aux.charAt(0), lido.charAt(0));
+			//lido++;
+		}
+	
+		pos_E = objDiversos.indexOf(lido.trim(), 'E');
+		if( pos_E != -1){                                            //existe mantissa
+			numero = lido;
+			lido += pos_E;
+			if ( (lido.charAt(0) == '-') || (lido.charAt(0) == '+') ){
+				aux_mant = aux_mant.replace(aux_mant.charAt(0), lido.charAt(0));
+				//lido++;
+			}
+		
+			mantissa = lido;
+		}// fim if tem E
+		else numero = lido;
+		
+		tam = numero.length();
+		//aux      + (6-tam) = numero;
+		tam = mantissa.length();
+		//aux_mant + (4-tam) = mantissa;
+		
+		aux = aux_mant;
+	
+		if (limite > (int) aux.length())
+			res = aux;
+		else
+		objDiversos.erro("Estouro de tamanho recuperando double",1);
+		
 }// fim forma_block_double
 
 	// _________________________________________________________________
 
-	/** M�todo usado para formatar um bloco double aleatoriamente. */
+	/** Metodo usado para formatar um bloco double aleatoriamente. */
 
-	int  forma_block_double_random(String res, int limite)
-{
-int tam = 0, num = 0, mant = 0, sinal = objMersenne.genrand()%4;         //[0++,1+-,2-+,3--]
-char aux[20], mantissa[10], aux_mant[10], numero[10];
-memset(aux     , '\0', 20);
-memset(mantissa, '\0', 10);
-memset(aux_mant, '\0', 10);
-memset(numero  , '\0', 10);
+	public void  forma_block_double_random(String res, int limite){
+		int tam = 0, num = 0, mant = 0, sinal = objMersenne.genrand()%4;         //[0++,1+-,2-+,3--]
+		String aux=  null, mantissa = null, aux_mant = null, numero = null;
 
-switch (sinal)//obtendo sinais
-{
-case 0: { strcpy( aux, "+00000"); strcpy( aux_mant, "+000"); break; }
-case 1: { strcpy( aux, "+00000"); strcpy( aux_mant, "-000"); break; }
-case 2: { strcpy( aux, "-00000"); strcpy( aux_mant, "+000"); break; }
-case 3: { strcpy( aux, "-00000"); strcpy( aux_mant, "-000"); break; }
-} // fim switch sinal
+		switch (sinal){
+		case 0: {    aux = "+00000" ;   aux_mant = "+000" ; break; }
+		case 1: {    aux = "+00000" ;  aux_mant = "-000" ; break; }
+		case 2: {    aux = "-00000" ;   aux_mant = "+000" ; break; }
+		case 3: {    aux = "-00000" ;   aux_mant = "-000" ; break; }
+		} // fim switch sinal
 
-num  = objMersenne.genrand() % 32768;        //obtendo string numero
-sprintf(numero   , "%d",num);
-mant = objMersenne.genrand() % 309;          //obtendo string mantissa
-sprintf(mantissa , "%d", mant);
+		num  = objMersenne.genrand() * 32768;        //obtendo string numero
+		numero   = String.format("%d", num);
+		mant = objMersenne.genrand() * 309;          //obtendo string mantissa
+		mantissa   = String.format("%d", mant);
+		
+		tam = numero.length();
+		//aux      + (6-tam) = numero;
+		tam = mantissa.length();
+	//	aux_mant  + (4-tam) = mantissa;
+		
+		aux = aux_mant;
+		
+		
+		if (limite > (int) aux.length())
+		res = aux;
+		else objDiversos.erro("Estouro de tamanho gerando double randomicamente",1);
 
-tam = strlen(numero);
-strcpy(aux      + (6-tam), numero);
-tam = strlen(mantissa);
-strcpy(aux_mant + (4-tam), mantissa);
-
-strcat(aux, aux_mant);
-
-memset( * res, '\0', limite);
-if (limite > (int) strlen(aux))
-strcpy( * res, aux);
-else erro("Estouro de tamanho gerando double randomicamente",1);
-return 1;
 
 } // fim forma_block_double_random
 
 	// _________________________________________________________________
 
-	/** M�todo que recupera o respectivo valor do bloco passado como argumento. */
+	/** Metodo que recupera o respectivo valor do bloco passado como argumento. */
 	public double  decode_block_float ( String bloco ){
-double res = 0;
-int pos_E  = -1, mant = 1;
-String mantissa = null, * numero = null;
-alocaCharPtr( & numero  , 20, "decode_block_float", "numero");
-alocaCharPtr( & mantissa, 10, "decode_block_float", "mantissa");
-objDiversos.trim ( & bloco);
-pos_E = objDiversos.indexOf(bloco, 'E');
-strcpy( numero, bloco );
-if(pos_E != -1)
-{
-strncpy(numero, bloco, pos_E);
-strcpy(mantissa, bloco + pos_E + 1);
-mant = atoi(mantissa);
+		double res = 0;
+		int pos_E  = -1, mant = 1;
+		String mantissa = null,  numero = null;
 
-}// fim pos_E
-res = atoi(numero);
-res *= pow(10, mant );
+		pos_E = objDiversos.indexOf(bloco.trim(), 'E');
+		numero = bloco;
+		if(pos_E != -1)	{
+			numero = bloco;
+			mantissa = (bloco + pos_E + 1);
+			mant = Integer.parseInt(mantissa);
+		}// fim pos_E
+		res = Double.parseDouble(numero);
+		res *= Math.pow(10, mant );
 
-alocaCharPtr( & numero  , 20, "decode_block_float", "numero");
-alocaCharPtr( & mantissa, 10, "decode_block_float", "mantissa");
-return res;
+		return res;
 }
 
 	// _________________________________________________________________
 
 	/**
-	 * M�todo usado para formatar um bloco a partir de um valor passado por
+	 * Metodo usado para formatar um bloco a partir de um valor passado por
 	 * argumento.
 	 */
-	int  forma_block_float (String res, int limite, String lido){
-int tam = 0;
-int pos_E = -1;
-char aux[20], mantissa[10], aux_mant[10], numero[10];
-memset(aux     , '\0', 20);
-memset(mantissa, '\0', 10);
-memset(aux_mant, '\0', 10);
-memset(numero  , '\0', 10);
-strcpy( aux, "+00000");
-strcpy( aux_mant, "+00");
-strcpy( mantissa, "00");
-
-objDiversos.trim ( & lido);
-if ( (lido[0] == '-') || (lido[0] == '+') )
-{
-aux[0] = lido[0];
-lido++;
-}
-objDiversos.trim (lido);
-pos_E = objDiversos.indexOf(lido, 'E');
-if( pos_E != -1)
-{                                            //existe mantissa
-strncpy(numero  , lido,  pos_E);
-lido += pos_E;
-if ( (lido[0] == '-') || (lido[0] == '+') )
-{
-aux_mant[0] = lido[0];
-lido++;
-}
-objDiversos.trim ( & lido);
-strcpy (mantissa, lido);
-}// fim if tem E
-else strcpy (numero, lido);
-tam = strlen(numero);
-strcpy(aux      + (6-tam), numero);
-tam = strlen(mantissa);
-strcpy(aux_mant + (3-tam), mantissa);
-
-strcat(aux, aux_mant);
-memset(*res, '\0', limite);
-if (limite > (int) strlen(aux))
-strcpy(*res, aux);
-else
-erro("Estouro de tamanho recuperando float",1);
-return true;
+	public void   forma_block_float (String res, int limite, String lido){
+		int tam = 0;
+		int pos_E = -1;
+		String aux=  null,
+				mantissa = null, 
+				aux_mant = null, 
+				numero = null;
+		 
+		aux = "+00000";
+		aux_mant = "+000";
+		mantissa = "000";
+			
+		if ( (lido.charAt(0) == '-') || (lido.charAt(0) == '+') )	{
+			aux = aux.replace(aux.charAt(0), lido.charAt(0));
+			//lido++;
+		}
+	
+		pos_E = objDiversos.indexOf(lido.trim(), 'E');
+		if( pos_E != -1){                                            //existe mantissa
+			numero = lido;
+			lido += pos_E;
+			if ( (lido.charAt(0) == '-') || (lido.charAt(0) == '+') ){
+				aux_mant = aux_mant.replace(aux_mant.charAt(0), lido.charAt(0));
+				//lido++;
+			}
+		
+			mantissa = lido;
+		}// fim if tem E
+		else numero = lido;
+		
+		tam = numero.length();
+		//aux      + (6-tam) = numero;
+		tam = mantissa.length();
+		//aux_mant + (3-tam) = mantissa;
+		
+		aux = aux_mant;
+		
+		if (limite > (int) aux.length())
+		res = aux;
+	else
+	objDiversos.erro("Estouro de tamanho recuperando float",1);
+	
 }
 
 	// _________________________________________________________________
-	/** M�todo usado para formatar um bloco float aleatoriamente. */
-	int  forma_block_float_random(String res, int limite)
-{
-int tam = 0, num = 0, mant = 0, sinal = objMersenne.genrand()%4;         //[0++,1+-,2-+,3--]
+	/** Metodo usado para formatar um bloco float aleatoriamente. */
+	public void  forma_block_float_random(String res, int limite){
+		int tam = 0, num = 0, mant = 0, sinal = objMersenne.genrand()%4;         //[0++,1+-,2-+,3--]
+		String aux=  null, mantissa = null, aux_mant = null, numero = null;
 
-String aux[20], mantissa[10], aux_mant[10], numero[10];
-memset(aux     , '\0', 20);
-memset(mantissa, '\0', 10);
-memset(aux_mant, '\0', 10);
-memset(numero  , '\0', 10);
+		switch (sinal){
+		case 0: {    aux = "+00000" ;   aux_mant = "+00" ; break; }
+		case 1: {    aux = "+00000" ;  aux_mant = "-00" ; break; }
+		case 2: {    aux = "-00000" ;   aux_mant = "+00" ; break; }
+		case 3: {    aux = "-00000" ;   aux_mant = "-00" ; break; }
+		} // fim switch sinal
 
-switch (sinal)//obtendo sinais
-{
-case 0: { strcpy( aux, "+00000"); strcpy( aux_mant, "+00"); break; }
-case 1: { strcpy( aux, "+00000"); strcpy( aux_mant, "-00"); break; }
-case 2: { strcpy( aux, "-00000"); strcpy( aux_mant, "+00"); break; }
-case 3: { strcpy( aux, "-00000"); strcpy( aux_mant, "-00"); break; }
-} // fim switch sinal
+		num  = objMersenne.genrand() * 32768;        //obtendo string numero
+		numero   = String.format("%d", num);
+		mant = objMersenne.genrand() * 309;          //obtendo string mantissa
+		mantissa   = String.format("%d", mant);
+		
+		tam = numero.length();
+		//aux      + (6-tam) = numero;
+		tam = mantissa.length();
+	//	aux_mant  + (3-tam) = mantissa;
+		
+		aux = aux_mant;
+		
+		if (limite > (int) aux.length())
+			res = aux;
+			else objDiversos.erro("Estouro de tamanho gerando float randomicamente",1);
 
-num  = objMersenne.genrand() % 32768;        //obtendo string numero
-sprintf(numero   , "%d",num);
-mant = objMersenne.genrand() % 39;          //obtendo string mantissa
-sprintf(mantissa , "%d", mant);
-tam = strlen(numero);
-strcpy(aux      + (6-tam), numero);
-tam = strlen(mantissa);
-strcpy(aux_mant + (3-tam), mantissa);
-
-strcat(aux, aux_mant);
-
-memset( *res, '\0', limite);
-if (limite > (int) strlen(aux))
-strcpy( *res, aux);
-else erro("Estouro de tamanho gerando float randomicamente",1);
-return 1;
 
 } // fim forma_block_float_random
 
 	// _________________________________________________________________
 	/**
-	 * M�todo usado para formatar um bloco string a partir de um valor passado
+	 * Metodo usado para formatar um bloco string a partir de um valor passado
 	 * por argumento.
 	 */
-	int  forma_block_string(String res, int limite, String lido)
-{
-int blocoTam = strlen(lido);
-String aux = null;
-alocaCharPtr( & aux , limite, "forma_block_string", "aux");
-strcpy(aux, lido);
-//   for (int j = blocoTam; j < limite - 1; j++) aux[j] = '#';
-for (int j = blocoTam; j < limite - 1; j++) aux[j] = 216;
-aux[limite - 1] = '\0';
-memset( * res, '\0', limite);
-if (limite > (int) strlen(aux))
-strcpy( * res, aux);
-else erro("Estouro de tamanho recuperando string",1);
-desalocaCharPtr( & aux , limite, "forma_block_string", "aux");
-return true;
+	public void  forma_block_string(String res, int limite, String lido){
+		int blocoTam = lido.length();
+		String aux = null;
+		aux = lido;
+		//   for (int j = blocoTam; j < limite - 1; j++) aux[j] = '#';
+		for (int j = blocoTam; j < limite - 1; j++) aux = aux.replace(aux.charAt(j), (char) 216);
+		if (limite > (int) aux.length())
+		res = aux;
+		else objDiversos.erro("Estouro de tamanho recuperando string",1);
+		
 } // fim forma_block_string
 
 	// _________________________________________________________________
-	/** M�todo usado para formatar um bloco string aleatoriamente. */
-	int  forma_block_string_random(String res, int limite)
-{
-//int carac = 0, tam_alfanumerico = strlen(alfanumerico);
-int blocoTam = (objMersenne.genrand() % (int) ( objCentral.tamanhoMaximoString - objCentral.tamanhoMinimoString + 1 ) ) + (int)objCentral.tamanhoMinimoString;
-String aux = null;
-alocaCharPtr( & aux , limite + 1, " forma_block_string", "aux");
-
-for (int i=0; i<blocoTam;i++){
-*(aux+i) = generateChar( objCentral.tipoString );
-}
-for (int j = blocoTam; j < objCentral.tamanhoMaximoString ; j++)
-*(aux+j) = 216;
-//for (int j = blocoTam; j < objCentral.tamanhoMaximoString ; j++) aux[j] ='#';
-*(aux + (int) objCentral.tamanhoMaximoString) = '\0';
-
-//memset( * res, '\0', limite);
-//cout << "\nValor de limite= " << limite;
-//cout << "\nValor de blocoTam= " << blocoTam;
-//cout << "\nValor de aux= " << aux;
-//cout << "\nValor strlen(aux)= " << strlen(aux);
-
-if (limite >= (int) strlen(aux))
-strcpy( * res, aux);
-else erro("Estouro de tamanho gerando string randomicamente",1);
-desalocaCharPtr( & aux , limite + 1, "forma_block_string", "aux");
-return true;
-} // fim forma_block_string_random
+	/** Metodo usado para formatar um bloco string aleatoriamente. */
+	public void forma_block_string_random(String res, int limite){
+		//int carac = 0, tam_alfanumerico = strlen(alfanumerico);
+		int blocoTam = (objMersenne.genrand() * (int) ( objCentral.tamanhoMaximoString - objCentral.tamanhoMinimoString + 1 ) ) + (int)objCentral.tamanhoMinimoString;
+		String aux = null;
+		
+		
+		for (int i=0; i<blocoTam;i++){
+	//	(aux+i) = generateChar( objCentral.tipoString );
+		}
+		for (int j = blocoTam; j < objCentral.tamanhoMaximoString ; j++)
+	//	(aux+j) = 216;
+		//for (int j = blocoTam; j < objCentral.tamanhoMaximoString ; j++) aux[j] ='#';
+		//(aux + (int) objCentral.tamanhoMaximoString) = '\0';
+		
+		
+		if (limite >= (int) aux.length())
+		res = aux;
+		else objDiversos.erro("Estouro de tamanho gerando string randomicamente",1);
+		
+		
+		} // fim forma_block_string_random
 }
